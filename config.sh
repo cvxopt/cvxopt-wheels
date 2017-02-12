@@ -39,7 +39,7 @@ function pre_build {
     export CVXOPT_FFTW_INC_DIR=${BUILD_PREFIX}/include
     export CVXOPT_DSDP_LIB_DIR=${BUILD_PREFIX}/lib
     export CVXOPT_DSDP_INC_DIR=${BUILD_PREFIX}/include
-    export CVXOPT_SUITESPARSE_SRC=`pwd`/SuiteSparse
+    export CVXOPT_SUITESPARSE_SRC_DIR=`pwd`/SuiteSparse
 }
 
 function run_tests {
