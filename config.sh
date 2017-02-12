@@ -15,6 +15,10 @@ function pre_build {
     # Runs in the root directory of this repository.
 
     # Build dependencies
+    if [ -n "${IS_OSX}" ]; then
+        # Disable macro-redefined warnings to avoid excessively long log
+        export CFLAGS="${CFLAGS} -Wno-macro-redefined"
+    fi
     build_openblas  # defined in multibuild/library_builders.sh
     if [ "${CVXOPT_BUILD_DSDP}" == "1" ]; then build_dsdp; fi
     if [ "${CVXOPT_BUILD_FFTW}" == "1" ]; then build_fftw; fi

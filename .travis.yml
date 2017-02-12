@@ -33,16 +33,16 @@ matrix:
     # Exclude the default Python 3.5 build
     - python: 3.5
   include:
-    - os: linux
-      env: MB_PYTHON_VERSION=2.7
+#    - os: linux
+#      env: MB_PYTHON_VERSION=2.7
 #    - os: linux
 #      env:
 #        - MB_PYTHON_VERSION=2.7
 #        - UNICODE_WIDTH=16
-    - os: linux
-      env:
-        - MB_PYTHON_VERSION=2.7
-        - PLAT=i686
+#    - os: linux
+#      env:
+#        - MB_PYTHON_VERSION=2.7
+#        - PLAT=i686
 #    - os: linux
 #      env:
 #        - MB_PYTHON_VERSION=2.7

@@ -14,7 +14,6 @@ SUITESPARSE_SHA256="698b5c455645bb1ad29a185f0d52025f3bd7cb7261e182c8878b0eb60567
 type fetch_unpack &> /dev/null || source multibuild/library_builders.sh
 
 function build_dsdp {
-  build_openblas
   if [ -e dsdp-stamp ]; then return; fi
   fetch_unpack http://www.mcs.anl.gov/hs/software/DSDP/DSDP${DSDP_VERSION}.tar.gz
   check_sha256sum archives/DSDP${DSDP_VERSION}.tar.gz ${DSDP_SHA256}
