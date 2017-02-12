@@ -15,11 +15,9 @@ function pre_build {
     # Runs in the root directory of this repository.
 
     # Build dependencies
-    if [ -n "${IS_OSX}" ]; then
-        # Disable macro-redefined warnings to avoid excessively long log
-        export CFLAGS="${CFLAGS} -Wno-macro-redefined"
+    if [ -z "${IS_OSX}" ]; then
+        build_openblas  # defined in multibuild/library_builders.sh
     fi
-    build_openblas  # defined in multibuild/library_builders.sh
     if [ "${CVXOPT_BUILD_DSDP}" == "1" ]; then build_dsdp; fi
     if [ "${CVXOPT_BUILD_FFTW}" == "1" ]; then build_fftw; fi
     if [ "${CVXOPT_BUILD_GLPK}" == "1" ]; then build_glpk; fi
@@ -27,14 +25,16 @@ function pre_build {
 
     # Download SuiteSparse
     if [ ! -e suitesparse-stamp ]; then
-      fetch_unpack http://faculty.cse.tamu.edu/davis/SuiteSparse/SuiteSparse-${SUITESPARSE_VERSION}.tar.gz
-      check_sha256sum archives/SuiteSparse-${SUITESPARSE_VERSION}.tar.gz ${SUITESPARSE_SHA256}
-      touch suitesparse-stamp
+        fetch_unpack http://faculty.cse.tamu.edu/davis/SuiteSparse/SuiteSparse-${SUITESPARSE_VERSION}.tar.gz
+        check_sha256sum archives/SuiteSparse-${SUITESPARSE_VERSION}.tar.gz ${SUITESPARSE_SHA256}
+        touch suitesparse-stamp
     fi
 
-    export CVXOPT_BLAS_LIB=openblas
-    export CVXOPT_LAPACK_LIB=openblas
-    export CVXOPT_BLAS_LIB_DIR=${BUILD_PREFIX}/lib
+    if [ -z "${IS_OSX}" ]; then
+        export CVXOPT_BLAS_LIB=openblas
+        export CVXOPT_LAPACK_LIB=openblas
+        export CVXOPT_BLAS_LIB_DIR=${BUILD_PREFIX}/lib
+    fi
     export CVXOPT_GLPK_LIB_DIR=${BUILD_PREFIX}/lib
     export CVXOPT_GLPK_INC_DIR=${BUILD_PREFIX}/include
     export CVXOPT_GSL_LIB_DIR=${BUILD_PREFIX}/lib
