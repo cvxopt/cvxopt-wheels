@@ -21,14 +21,12 @@ function build_dsdp {
     (cd DSDP${DSDP_VERSION} \
         && patch -p1 < ../dsdp.patch \
         && make LAPACKBLAS="-L/usr/lib -llapack -lblas" DSDPROOT=`pwd` dylib \
-        && cp lib/libdsdp.dylib ${BUILD_PREFIX}/lib \
         && cp include/*.h ${BUILD_PREFIX}/include)
   else
     build_openblas
     (cd DSDP${DSDP_VERSION} \
         && patch -p1 < ../dsdp.patch \
         && make LAPACKBLAS="-L${BUILD_PREFIX}/lib -lopenblas" DSDPROOT=`pwd` oshared \
-        && cp lib/libdsdp.so ${BUILD_PREFIX}/lib \
         && cp include/*.h ${BUILD_PREFIX}/include)
   fi
   touch dsdp-stamp

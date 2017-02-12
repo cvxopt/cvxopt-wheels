@@ -1,6 +1,6 @@
 diff -ruN DSDP5.8/Makefile DSDP5.8_patched/Makefile
 --- DSDP5.8/Makefile	2005-10-21 21:31:14.000000000 +0200
-+++ DSDP5.8_patched/Makefile	2017-02-10 22:44:26.000000000 +0100
++++ DSDP5.8_patched/Makefile	2017-02-12 22:05:46.000000000 +0100
 @@ -1,5 +1,5 @@
  
 -default: 
@@ -19,12 +19,12 @@ diff -ruN DSDP5.8/Makefile DSDP5.8_patched/Makefile
 -example:
 -	cd ${D2}; make most
 +dylib: dsdplibrary
-+	libtool -dynamic -install_name ${BUILD_PREFIX}/lib/libdsdp.dylib -current_version 5.8 -o lib/libdsdp.dylib objs/*.o ${LAPACKBLAS} -lSystem
++	libtool -dynamic -install_name ${BUILD_PREFIX}/lib/libdsdp.dylib -current_version 5.8 -o ${BUILD_PREFIX}/lib/libdsdp.dylib objs/*.o ${LAPACKBLAS} -lSystem
  
 -test:
 -	cd ${D4}; make all
 +oshared: dsdplibrary
-+	${CC} -shared -Wl,-soname=${DSDP_SONAME} -o lib/libdsdp.so objs/*.o ${LAPACKBLAS}
++	${CC} -shared -Wl,-soname=libdsdp.so -o ${BUILD_PREFIX}/lib/libdsdp.so objs/*.o ${LAPACKBLAS}
  
 -dmatlab:
 -	cd ${D2}; make dsdp
@@ -47,12 +47,11 @@ diff -ruN DSDP5.8/Makefile DSDP5.8_patched/Makefile
  
  clean:
  	cd ${D1}; make clean
-@@ -44,17 +27,5 @@
+@@ -44,17 +27,4 @@
  	cd ${D4}; make clean
  	${RM} lib/lib* matlab/dsdp.mex*
  	${RM} *~ */*~ */*/*~
-+	${RM} objs/*.o
- 
+-
 -htmlzip:
 -	zip -r DSDP5-api-html.zip dox
 -	${RM} -R dox
@@ -66,9 +65,10 @@ diff -ruN DSDP5.8/Makefile DSDP5.8_patched/Makefile
 -	${SH_LD} ${DSDPLIBSO} *.o -o ${DSDPLIBSO}; \
 -	cd ../ ; \
 -	${RM} tmp
++	${RM} objs/*.o
 diff -ruN DSDP5.8/make.include DSDP5.8_patched/make.include
 --- DSDP5.8/make.include	2005-10-21 21:31:14.000000000 +0200
-+++ DSDP5.8_patched/make.include	2017-02-10 22:17:09.000000000 +0100
++++ DSDP5.8_patched/make.include	2017-02-12 22:05:46.000000000 +0100
 @@ -1,75 +1,37 @@
  # STEP 1: Set DSDPROOT in this file or comment out and make it an environment variable
 -#DSDPROOT	= /home/benson/dsdp/DSDP5.8
@@ -199,7 +199,7 @@ diff -ruN DSDP5.8/make.include DSDP5.8_patched/make.include
  	  echo "Set the variable DSDPROOT " ; \
 diff -ruN DSDP5.8/src/sys/dsdploginfo.c DSDP5.8_patched/src/sys/dsdploginfo.c
 --- DSDP5.8/src/sys/dsdploginfo.c	2005-10-21 21:31:15.000000000 +0200
-+++ DSDP5.8_patched/src/sys/dsdploginfo.c	2017-02-10 22:09:29.000000000 +0100
++++ DSDP5.8_patched/src/sys/dsdploginfo.c	2017-02-12 22:05:46.000000000 +0100
 @@ -6,7 +6,9 @@
  #include <stdarg.h>
  #include <sys/types.h>
