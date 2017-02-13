@@ -20,14 +20,12 @@ function build_dsdp {
   if [ -n "${IS_OSX}" ]; then
     (cd DSDP${DSDP_VERSION} \
         && patch -p1 < ../dsdp.patch \
-        && make LAPACKBLAS="-L/usr/lib -llapack -lblas" DSDPROOT=`pwd` dylib \
-        && cp include/*.h ${BUILD_PREFIX}/include)
+        && make PREFIX=${BUILD_PREFIX} DSDPROOT=`pwd` install)
   else
     build_openblas
     (cd DSDP${DSDP_VERSION} \
         && patch -p1 < ../dsdp.patch \
-        && make LAPACKBLAS="-L${BUILD_PREFIX}/lib -lopenblas" DSDPROOT=`pwd` oshared \
-        && cp include/*.h ${BUILD_PREFIX}/include)
+        && make LAPACKBLAS="-L${BUILD_PREFIX}/lib -lopenblas" PREFIX=${BUILD_PREFIX} DSDPROOT=`pwd` install)
   fi
   touch dsdp-stamp
 }
