@@ -26,7 +26,7 @@ The build process performs the following steps:
 
 Version numbers for the dependencies can be found in the `library_builders.sh` source file.
 
-## Triggering a building
+## Triggering a build
 
 The build process is triggered by making a commit to the `cvxopt-wheels` repository. The variable `BUILD_COMMIT` in `.travis.yml` specifies which commit from the CVXOPT repository to build.
 
