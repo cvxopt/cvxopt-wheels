@@ -1,8 +1,9 @@
-# CVXOPT wheels for macOS and Linux
+# CVXOPT wheels for macOS, Linux, and Windows
 
-This repository automates [CVXOPT](https://github/com/cvxopt/cvxopt) wheel building using [multibuild](https://github.com/matthew-brett/multibuild) and [Travis CI](https://travis-ci.org/cvxopt/cvxopt-wheels).
+This repository automates [CVXOPT](https://github/com/cvxopt/cvxopt) wheel building using [multibuild](https://github.com/matthew-brett/multibuild), [Travis CI](https://travis-ci.org/cvxopt/cvxopt-wheels), and [AppVeyor](https://ci.appveyor.com/project/martinandersen/cvxopt-wheels).
 
 [![Build Status](https://travis-ci.org/cvxopt/cvxopt-wheels.svg?branch=master)](https://travis-ci.org/cvxopt/cvxopt-wheels)
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/martinandersen/cvxopt-wheels?branch=master&svg=true)](https://ci.appveyor.com/project/martinandersen/cvxopt-wheels)
 
 ## Copyright and license
 
@@ -12,21 +13,22 @@ CVXOPT is distributed in the hope that it will be useful, but WITHOUT ANY WARRAN
 
 ## What is being built?
 
-We currently build self-contained wheels for macOS and Linux ([manylinux1](https://www.python.org/dev/peps/pep-0513/)).
-Linux wheels are linked against [OpenBLAS](http://www.openblas.net) whereas macOS wheels are linked against the built-in BLAS/LAPACK library included in the [Accelerate](https://developer.apple.com/reference/accelerate) framework.
+We currently build the following:
+
+- Self-contained wheels for macOS and Linux ([manylinux1](https://www.python.org/dev/peps/pep-0513/)), including the optional dependencies DSDP, FFTW, GLPK, and GSL. The wheels are linked against [OpenBLAS](http://www.openblas.net).
+- Wheels for Windows (x86-64 only) *without* any of the optional dependencies. The wheels are linked against MKL and *not self-contained*: MKL must be installed (e.g., via Pip or Conda) for these wheels to work.
 
 The build process performs the following steps:
 
-- builds OpenBLAS (Linux only)
-- builds optional dependencies ([DSDP](http://www.mcs.anl.gov/hs/software/DSDP/), [FFTW](http://www.fftw.org), [GLPK](https://www.gnu.org/software/glpk/), and [GSL](https://www.gnu.org/software/gsl/))
 - downloads SuiteSparse source
+- builds OpenBLAS (macOS/Linux)
+- builds all optional dependencies ([DSDP](http://www.mcs.anl.gov/hs/software/DSDP/), [FFTW](http://www.fftw.org), [GLPK](https://www.gnu.org/software/glpk/), and [GSL](https://www.gnu.org/software/gsl/)) (macOS/Linux)
 - builds CVXOPT wheel, linking against dependencies
 - processes wheel using [delocate](https://github.com/matthew-brett/delocate) (macOS) or [auditwheel](https://github.com/pypa/auditwheel) (Linux) to include dependencies in wheel
-- uploads the wheel to a [Rackspace container](https://3f23b170c54c2533c070-1c8a9b3114517dc5fe17b7c3f8c63a43.ssl.cf2.rackcdn.com)
+- uploads the wheel to a [Rackspace container](https://3f23b170c54c2533c070-1c8a9b3114517dc5fe17b7c3f8c63a43.ssl.cf2.rackcdn.com) (macOS/Linux)
 
 Version numbers for the dependencies can be found in the `library_builders.sh` source file.
 
 ## Triggering a build
 
-The build process is triggered by making a commit to the `cvxopt-wheels` repository. The variable `BUILD_COMMIT` in `.travis.yml` specifies which commit from the CVXOPT repository to build.
-
+The build process is triggered by making a commit to the `cvxopt-wheels` repository. The variable `BUILD_COMMIT` in `.travis.yml` and `.appveyor.yml` specifies which commit from the CVXOPT repository to build.
