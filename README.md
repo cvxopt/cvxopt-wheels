@@ -16,7 +16,7 @@ CVXOPT is distributed in the hope that it will be useful, but WITHOUT ANY WARRAN
 We currently build the following:
 
 - Self-contained wheels for macOS and Linux ([manylinux1](https://www.python.org/dev/peps/pep-0513/)), including the optional dependencies DSDP, FFTW, GLPK, and GSL. The wheels are linked against [OpenBLAS](http://www.openblas.net).
-- Wheels for Windows (x86-64 only), including the optional dependency GLPK. The wheels are linked against MKL and *not self-contained*: MKL must be installed (e.g., via Pip or Conda) for these wheels to work.
+- Wheels for Windows (x86-64 only) without any of the optional dependencies (Python 3.5+ wheels include GLPK). The wheels are linked against MKL and are *not self-contained*: MKL must be installed (e.g., via Pip or Conda) for these wheels to work.
 
 The build process performs the following steps:
 

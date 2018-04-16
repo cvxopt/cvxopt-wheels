@@ -13,20 +13,14 @@ environment:
     BUILD_DEPENDS: "mkl"
     TEST_DEPENDS: "nose"
     CVXOPT_BUILD_DSDP: "0"
-    CVXOPT_BUILD_FFTW: "0"
     CVXOPT_BUILD_GLPK: "1"
-    CVXOPT_BUILD_GSL:  "0"
     CVXOPT_INSTALL_REQUIRES: mkl
     CVXOPT_BLAS_LIB: "mkl_rt"
     CVXOPT_LAPACK_LIB: "mkl_rt"
     DSDP_VERSION: "5.8"
     DSDP_SHA256: "26aa624525a636de272c0b329e2dfd01a0d5b7827f1c1c76f393d71e37dead70"
-    FFTW_VERSION: "3.3.7"
-    FFTW_SHA256: "3b609b7feba5230e8f6dd8d245ddbefac324c5a6ae4186947670d9ac2cd25573"
     GLPK_VERSION: "4.65"
     GLPK_SHA256: "4281e29b628864dfe48d393a7bedd781e5b475387c20d8b0158f329994721a10"
-    GSL_VERSION: "2.4"
-    GSL_SHA256: "4d46d07b946e7b31c19bbf33dda6204d7bedc2f5462a1bae1d4013426cd1ce9b"
     SUITESPARSE_VERSION: "5.2.0"
     SUITESPARSE_SHA256: "3c46c035ea8217649958a0f73360e825b0c9dcca4e32a9349d2c7678c0d48813"
 
@@ -75,25 +69,14 @@ install:
         wget -nv http://www.mcs.anl.gov/hs/software/DSDP/DSDP%DEDP_VERSION%.tar.gz &&
         checksum -t sha256 -c %DSDP_SHA256% DSDP%DSDP_VERSION%.tar.gz &&
         7z x -bso0 -bsp0 DSDP%DSDP_VERSION%.tar.gz && 7z x -bso0 -bsp0 DSDP%DSDP_VERSION%.tar &&
-        EXIT /B 1
       )
 
-    # Download and build FFTW
-    - if [%CVXOPT_BUILD_FFTW%]==[1] (
-        appveyor AddMessage "Disabled FFTW extension" &&
-        SET "CVXOPT_BUILD_FFTW=0"
-      )
-
-    # Download GLPK
-    - if [%CVXOPT_BUILD_GLPK%]==[1] (
-        wget -nv http://ftp.gnu.org/gnu/glpk/glpk-%GLPK_VERSION%.tar.gz &&
-        checksum -t sha256 -c %GLPK_SHA256% glpk-%GLPK_VERSION%.tar.gz &&
-        7z x -bso0 -bsp0 glpk-%GLPK_VERSION%.tar.gz && 7z x -bso0 -bsp0 glpk-%GLPK_VERSION%.tar
-      )
-
-    # Build GLPK
+    # Download and build GLPK
     - if [%CVXOPT_BUILD_GLPK%]==[1] (
         if [%CVXOPT_MSVC%]==[1] (
+          wget -nv http://ftp.gnu.org/gnu/glpk/glpk-%GLPK_VERSION%.tar.gz &&
+          checksum -t sha256 -c %GLPK_SHA256% glpk-%GLPK_VERSION%.tar.gz &&
+          7z x -bso0 -bsp0 glpk-%GLPK_VERSION%.tar.gz && 7z x -bso0 -bsp0 glpk-%GLPK_VERSION%.tar &&
           cd glpk-%GLPK_VERSION%\w64 &&
           copy config_VC config.h &&
           nmake /f Makefile_VC glpk.lib &&
@@ -101,15 +84,9 @@ install:
           SET "CVXOPT_GLPK_LIB_DIR=%cd%\glpk-%GLPK_VERSION%\w64" &&
           SET "CVXOPT_GLPK_INC_DIR=%cd%\glpk-%GLPK_VERSION%\src"
         ) else (
-          appveyor AddMessage "Disabled GLPK extension" &&
+          appveyor AddMessage "Disabled GLPK extension" -Category Warning &&
           SET "CVXOPT_BUILD_GLPK=0"
         )
-      )
-
-    # Download and build GSL
-    - if [%CVXOPT_BUILD_GSL%]==[1] (
-        appveyor AddMessage "Disabled GSL extension" &&
-        SET "CVXOPT_BUILD_GSL=0"
       )
 
     # Check that we have the expected version and architecture for Python
