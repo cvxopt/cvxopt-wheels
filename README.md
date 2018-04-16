@@ -1,6 +1,6 @@
 # CVXOPT wheels for macOS, Linux, and Windows
 
-This repository automates [CVXOPT](https://github/com/cvxopt/cvxopt) wheel building using [multibuild](https://github.com/matthew-brett/multibuild), [Travis CI](https://travis-ci.org/cvxopt/cvxopt-wheels), and [AppVeyor](https://ci.appveyor.com/project/martinandersen/cvxopt-wheels).
+This repository automates [CVXOPT](https://github.com/cvxopt/cvxopt) wheel building using [multibuild](https://github.com/matthew-brett/multibuild), [Travis CI](https://travis-ci.org/cvxopt/cvxopt-wheels), and [AppVeyor](https://ci.appveyor.com/project/martinandersen/cvxopt-wheels).
 
 [![Build Status](https://travis-ci.org/cvxopt/cvxopt-wheels.svg?branch=master)](https://travis-ci.org/cvxopt/cvxopt-wheels)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/martinandersen/cvxopt-wheels?branch=master&svg=true)](https://ci.appveyor.com/project/martinandersen/cvxopt-wheels)
@@ -25,7 +25,7 @@ The build process performs the following steps:
 - builds all optional dependencies ([DSDP](http://www.mcs.anl.gov/hs/software/DSDP/), [FFTW](http://www.fftw.org), [GLPK](https://www.gnu.org/software/glpk/), and [GSL](https://www.gnu.org/software/gsl/)) (macOS/Linux)
 - builds CVXOPT wheel, linking against dependencies
 - processes wheel using [delocate](https://github.com/matthew-brett/delocate) (macOS) or [auditwheel](https://github.com/pypa/auditwheel) (Linux) to include dependencies in wheel
-- uploads the wheel to a [Rackspace container](https://3f23b170c54c2533c070-1c8a9b3114517dc5fe17b7c3f8c63a43.ssl.cf2.rackcdn.com) (macOS/Linux)
+- uploads wheel to a [Rackspace container](https://3f23b170c54c2533c070-1c8a9b3114517dc5fe17b7c3f8c63a43.ssl.cf2.rackcdn.com) (macOS/Linux) or to [AppVeyor cloud storage](https://ci.appveyor.com/project/martinandersen/cvxopt-wheels/history) (Windows)
 
 Version numbers for the dependencies can be found in the `library_builders.sh` source file.
 
