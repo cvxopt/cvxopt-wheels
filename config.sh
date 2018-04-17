@@ -14,15 +14,6 @@ function pre_build {
     # Any stuff that you need to do before you start building the wheels
     # Runs in the root directory of this repository.
 
-    # Build dependencies
-    if [ -z "${IS_OSX}" ]; then
-        build_openblas  # defined in multibuild/library_builders.sh
-    fi
-    if [ "${CVXOPT_BUILD_DSDP}" == "1" ]; then build_dsdp; fi
-    if [ "${CVXOPT_BUILD_FFTW}" == "1" ]; then build_fftw; fi
-    if [ "${CVXOPT_BUILD_GLPK}" == "1" ]; then build_glpk; fi
-    if [ "${CVXOPT_BUILD_GSL}" == "1" ]; then build_gsl; fi
-
     # Download SuiteSparse
     if [ ! -e suitesparse-stamp ]; then
         fetch_unpack http://faculty.cse.tamu.edu/davis/SuiteSparse/SuiteSparse-${SUITESPARSE_VERSION}.tar.gz
@@ -30,11 +21,15 @@ function pre_build {
         touch suitesparse-stamp
     fi
 
-    if [ -z "${IS_OSX}" ]; then
-        export CVXOPT_BLAS_LIB=openblas
-        export CVXOPT_LAPACK_LIB=openblas
-        export CVXOPT_BLAS_LIB_DIR=${BUILD_PREFIX}/lib
-    fi
+    # Build dependencies
+    build_openblas
+    if [ "${CVXOPT_BUILD_DSDP}" == "1" ]; then build_dsdp; fi
+    if [ "${CVXOPT_BUILD_FFTW}" == "1" ]; then build_fftw; fi
+    if [ "${CVXOPT_BUILD_GLPK}" == "1" ]; then build_glpk; fi
+    if [ "${CVXOPT_BUILD_GSL}" == "1" ]; then build_gsl; fi
+    export CVXOPT_BLAS_LIB=openblas
+    export CVXOPT_LAPACK_LIB=openblas
+    export CVXOPT_BLAS_LIB_DIR=${BUILD_PREFIX}/lib
     export CVXOPT_GLPK_LIB_DIR=${BUILD_PREFIX}/lib
     export CVXOPT_GLPK_INC_DIR=${BUILD_PREFIX}/include
     export CVXOPT_GSL_LIB_DIR=${BUILD_PREFIX}/lib
