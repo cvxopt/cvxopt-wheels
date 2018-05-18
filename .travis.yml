@@ -2,13 +2,13 @@ env:
     global:
         - REPO_DIR=cvxopt
         # Commit from your-project that you want to build
-        - BUILD_COMMIT=1.1.9
+        - BUILD_COMMIT=1.2.0
         # pip dependencies to _build_ your project
         - BUILD_DEPENDS=""
         # pip dependencies to _test_ your project.  Include any dependencies
         # that you need, that are also specified in BUILD_DEPENDS, this will be
         # a separate install.
-        - TEST_DEPENDS="nose"
+        - TEST_DEPENDS="pytest"
         - PLAT=x86_64
         - UNICODE_WIDTH=32
         - WHEELHOUSE_UPLOADER_USERNAME=travis-worker
@@ -31,6 +31,7 @@ matrix:
   exclude:
     # Exclude the default Python 3.5 build
     - python: 3.5
+
   include:
     - os: linux
       env: MB_PYTHON_VERSION=2.7
@@ -49,13 +50,6 @@ matrix:
         - UNICODE_WIDTH=16
     - os: linux
       env:
-        - MB_PYTHON_VERSION=3.3
-    - os: linux
-      env:
-        - MB_PYTHON_VERSION=3.3
-        - PLAT=i686
-    - os: linux
-      env:
         - MB_PYTHON_VERSION=3.4
     - os: linux
       env:
@@ -76,18 +70,22 @@ matrix:
         - MB_PYTHON_VERSION=3.6
         - PLAT=i686
     - os: osx
+      osx_image: xcode7.3
       language: generic
       env:
         - MB_PYTHON_VERSION=2.7
     - os: osx
+      osx_image: xcode7.3
       language: generic
       env:
         - MB_PYTHON_VERSION=3.4
     - os: osx
+      osx_image: xcode7.3
       language: generic
       env:
         - MB_PYTHON_VERSION=3.5
     - os: osx
+      osx_image: xcode7.3
       language: generic
       env:
         - MB_PYTHON_VERSION=3.6
