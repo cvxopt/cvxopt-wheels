@@ -1,15 +1,15 @@
 
 BUILD_PREFIX="${BUILD_PREFIX:-/usr/local}"
-DSDP_VERSION="${DSDP_VERSION:-5.8}"
+DSDP_VERSION="5.8"
 DSDP_SHA256="26aa624525a636de272c0b329e2dfd01a0d5b7827f1c1c76f393d71e37dead70"
-GLPK_VERSION="${GLPK_VERSION:-4.65}"
+GLPK_VERSION="4.65"
 GLPK_SHA256="4281e29b628864dfe48d393a7bedd781e5b475387c20d8b0158f329994721a10"
-GSL_VERSION="${GSL_VERSION:-2.4}"
-GSL_SHA256="4d46d07b946e7b31c19bbf33dda6204d7bedc2f5462a1bae1d4013426cd1ce9b"
-FFTW_VERSION="${FFTW_VERSION:-3.3.7}"
-FFTW_SHA256="3b609b7feba5230e8f6dd8d245ddbefac324c5a6ae4186947670d9ac2cd25573"
-SUITESPARSE_VERSION="${SUITESPARSE_VERSION:-5.2.0}"
-SUITESPARSE_SHA256="3c46c035ea8217649958a0f73360e825b0c9dcca4e32a9349d2c7678c0d48813"
+GSL_VERSION="2.5"
+GSL_SHA256="0460ad7c2542caaddc6729762952d345374784100223995eb14d614861f2258d"
+FFTW_VERSION="3.3.8"
+FFTW_SHA256="6113262f6e92c5bd474f2875fa1b01054c4ad5040f6b0da7c03c98821d9ae303"
+SUITESPARSE_VERSION="5.3.0"
+SUITESPARSE_SHA256="90e69713d8c454da5a95a839aea5d97d8d03d00cc1f667c4bdfca03f640f963d"
 
 
 type fetch_unpack &> /dev/null || source multibuild/library_builders.sh
@@ -55,7 +55,7 @@ function build_glpk {
 
 function build_gsl {
   if [ -e gsl-stamp ]; then return; fi
-  fetch_unpack http://mirrors.peers.community/mirrors/gnu/gsl/gsl-${GSL_VERSION}.tar.gz
+  fetch_unpack http://ftp.download-by.net/gnu/gnu/gsl/gsl-${GSL_VERSION}.tar.gz
   check_sha256sum archives/gsl-${GSL_VERSION}.tar.gz ${GSL_SHA256}
   (cd gsl-${GSL_VERSION} \
       && ./configure --prefix=${BUILD_PREFIX} \
