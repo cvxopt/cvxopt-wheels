@@ -15,13 +15,13 @@ CVXOPT is distributed in the hope that it will be useful, but WITHOUT ANY WARRAN
 
 We currently build the following:
 
-- Self-contained wheels for macOS and Linux ([manylinux1](https://www.python.org/dev/peps/pep-0513/)), including the optional dependencies DSDP, FFTW, GLPK, and GSL. The wheels are linked against [OpenBLAS](http://www.openblas.net).
+- Self-contained wheels for macOS and Linux ([manylinux1](https://www.python.org/dev/peps/pep-0513/)), including the optional dependencies DSDP, FFTW, GLPK, and GSL. The Linux wheels are linked against [OpenBLAS](http://www.openblas.net), and the macOS wheels are linked against [Accelerate](https://developer.apple.com/documentation/accelerate?language=objc).
 - Wheels for Windows (x86-64 only) without any of the optional dependencies (Python 3.5+ wheels include GLPK). The wheels are linked against MKL and are *not self-contained*: MKL must be installed (e.g., via Pip or Conda) for these wheels to work.
 
 The build process performs the following steps:
 
 - downloads SuiteSparse source
-- builds OpenBLAS (macOS/Linux)
+- builds OpenBLAS (Linux)
 - builds all optional dependencies ([DSDP](http://www.mcs.anl.gov/hs/software/DSDP/), [FFTW](http://www.fftw.org), [GLPK](https://www.gnu.org/software/glpk/), and [GSL](https://www.gnu.org/software/gsl/)) (macOS/Linux)
 - builds CVXOPT wheel, linking against dependencies
 - processes wheel using [delocate](https://github.com/matthew-brett/delocate) (macOS) or [auditwheel](https://github.com/pypa/auditwheel) (Linux) to include dependencies in wheel
