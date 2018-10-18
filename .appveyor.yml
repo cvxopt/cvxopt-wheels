@@ -9,7 +9,7 @@ environment:
     PYTHON_ARCH: "64"
     REPO_DIR: "cvxopt"
     PACKAGE_NAME: "cvxopt"
-    BUILD_COMMIT: "1.2.1"
+    BUILD_COMMIT: "1.2.2"
     BUILD_DEPENDS: "mkl==2018.0.3"
     TEST_DEPENDS: "pytest"
     CVXOPT_BUILD_DSDP: "0"
