@@ -2,7 +2,7 @@ env:
     global:
         - REPO_DIR=cvxopt
         # Commit from your-project that you want to build
-        - BUILD_COMMIT=1.2.3
+        - BUILD_COMMIT=1.2.4
         # pip dependencies to _build_ your project
         - BUILD_DEPENDS=""
         # pip dependencies to _test_ your project.  Include any dependencies
@@ -19,19 +19,11 @@ env:
         - secure:
             "sk01T3Fu+UGpe7F/Px8Wabj4zx6Kv56OJNzazd/W11nMqgtRcB+OrS9A3gORCoTaqk8KeTyD2+uy9UDhgPw0CJZOIxWEVH3u4iWAQegYdcRaz8ZF5yCLYTV5fND5IyWm72xlL0LfckAotD7/j/3xbttY8Epiz1etAvGFmpY1W5dZYWa1ML6ioqCYPDZTq3sN/AU9nDOsn6FtX62+iNf8qc1WV/Vbc3fKrZIeTqLuqkrqKET3BOhOwcCSSRfLO+Nl26lioJ+aeDhQ0SWLChj/zOHyBlKHJfd05KxDcb7l0+65BbRKq1l52DNg+ZCie5KlpItQoGK6BpLl8nf7HSyiHoGMpTFsZ9Xx3CNq+6L7AnFkVJxTjKYDSIP4L+ENh81KRuOpCzSvCjRQz6Ke5mWVnsRncZeXmaY//gjgIAlPgyKN/rU7TwOXzz3NWoQrrVOt8EO8uiaO6w8llStB1fkKq+YIe/KgUATtjWYjXjHiaV1vjQCSGkB0K+ljaxun+rxLuNRC2mBioiiXG3GPWIoXoxD5aVPxQxK9r492LzeuAL6+5FtcntE/v9YDmP1PuLWHzyjajErq0INvrrqOzB2u/RJTS5+BV5Emlf+ryX2Z/hcI/lKhUtMxgEt8cWk+lhLiwhlHQRJkkw+L4MVULS0+LbPTTEdJ1zMI3bzWdy1wlOk="
 
-language: python
-# The travis Python version is unrelated to the version we build and test
-# with.  This is set with the MB_PYTHON_VERSION variable.
-python: 3.5
-sudo: required
-dist: trusty
+language: generic
 services: docker
+dist: xenial
 
 matrix:
-  exclude:
-    # Exclude the default Python 3.5 build
-    - python: 3.5
-
   include:
     - os: linux
       env: MB_PYTHON_VERSION=2.7
@@ -62,33 +54,30 @@ matrix:
       env:
         - MB_PYTHON_VERSION=3.6
         - PLAT=i686
-    - os: linux
-      env:
-        - MB_PYTHON_VERSION=3.7
-    - os: linux
-      env:
-        - MB_PYTHON_VERSION=3.7
-        - PLAT=i686
     - os: osx
-      osx_image: xcode7.3
-      language: generic
+      env:
+        - MB_PYTHON_VERSION=2.7
+        - MB_PYTHON_OSX_VER=10.6
+    - os: osx
       env:
         - MB_PYTHON_VERSION=2.7
     - os: osx
-      osx_image: xcode7.3
-      language: generic
       env:
         - MB_PYTHON_VERSION=3.5
     - os: osx
-      osx_image: xcode7.3
-      language: generic
       env:
         - MB_PYTHON_VERSION=3.6
     - os: osx
-      osx_image: xcode7.3
-      language: generic
       env:
         - MB_PYTHON_VERSION=3.7
+        - MB_PYTHON_OSX_VER=10.6
+    - os: osx
+      env:
+        - MB_PYTHON_VERSION=3.7
+    - os: osx
+      env:
+        - MB_PYTHON_VERSION=3.8
+
 
 before_install:
     - source multibuild/common_utils.sh
