@@ -81,6 +81,7 @@ before_install:
     - source multibuild/common_utils.sh
     - source multibuild/travis_steps.sh
     - before_install
+    - pushd $REPO_DIR/../multibuild; git apply ../pip20.patch; popd 
 
 install:
     # Maybe get and clean and patch source
