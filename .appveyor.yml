@@ -1,15 +1,15 @@
-version: 1.2.3.{build}-{branch}
+version: 1.2.4.{build}-{branch}
 image: Visual Studio 2017
 init:
     - choco install wget checksum
 
 environment:
   global:
-    PYTHON: C:\Miniconda36-x64
+    PYTHON: C:\Miniconda37-x64
     PYTHON_ARCH: "64"
     REPO_DIR: "cvxopt"
     PACKAGE_NAME: "cvxopt"
-    BUILD_COMMIT: "1.2.3"
+    BUILD_COMMIT: "HEAD"
     BUILD_DEPENDS: "mkl==2018.0.3"
     TEST_DEPENDS: "pytest"
     CVXOPT_BUILD_DSDP: "0"
@@ -19,8 +19,8 @@ environment:
     CVXOPT_LAPACK_LIB: "mkl_rt"
     GLPK_VERSION: "4.65"
     GLPK_SHA256: "4281e29b628864dfe48d393a7bedd781e5b475387c20d8b0158f329994721a10"
-    SUITESPARSE_VERSION: "5.3.0"
-    SUITESPARSE_SHA256: "90e69713d8c454da5a95a839aea5d97d8d03d00cc1f667c4bdfca03f640f963d"
+    SUITESPARSE_VERSION: "5.6.0"
+    SUITESPARSE_SHA256: "dc2c56c21c5f18811e28dc673dd79039e1cc81cda6e694842661498d346d669e"
 
   matrix:
     - PYTHON_VERSION: "3.7"
@@ -29,8 +29,6 @@ environment:
       CVXOPT_MSVC: "1"
     - PYTHON_VERSION: "3.5"
       CVXOPT_MSVC: "1"
-    - PYTHON_VERSION: "3.4"
-      COMPILER: mingwpy
     - PYTHON_VERSION: "2.7"
       COMPILER: mingwpy
 
@@ -58,9 +56,11 @@ install:
     - SET CVXOPT_BLAS_LIB_DIR=%PYTHON%\envs\build_env\Library\lib
 
     # Download SuiteSparse and set CVXOPT_SUITESPARSE_SRC_DIR
-    - wget -nv http://faculty.cse.tamu.edu/davis/SuiteSparse/SuiteSparse-%SUITESPARSE_VERSION%.tar.gz
+    - wget -nv https://api.github.com/repos/DrTimothyAldenDavis/SuiteSparse/tarball/v%SUITESPARSE_VERSION% -O SuiteSparse-%SUITESPARSE_VERSION%.tar.gz
     - checksum -t sha256 -c %SUITESPARSE_SHA256% SuiteSparse-%SUITESPARSE_VERSION%.tar.gz
-    - 7z x -bso0 -bsp0 SuiteSparse-%SUITESPARSE_VERSION%.tar.gz && 7z x -bso0 -bsp0 SuiteSparse-%SUITESPARSE_VERSION%.tar
+    - mkdir SuiteSparse
+    - 7z x -bso0 -bsp0 SuiteSparse-%SUITESPARSE_VERSION%.tar.gz && 7z x -bso0 -bsp0 SuiteSparse-%SUITESPARSE_VERSION%.tar -oSuiteSparse
+    - sh.exe -c "mv SuiteSparse/Dr*/* SuiteSparse/"
     - SET CVXOPT_SUITESPARSE_SRC_DIR=%cd%\SuiteSparse
 
     # Download and build GLPK
