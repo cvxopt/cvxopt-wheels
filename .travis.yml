@@ -54,6 +54,20 @@ matrix:
       env:
         - MB_PYTHON_VERSION=3.6
         - PLAT=i686
+    - os: linux
+      env:
+        - MB_PYTHON_VERSION=3.7
+    - os: linux
+      env:
+        - MB_PYTHON_VERSION=3.7
+        - PLAT=i686
+    - os: linux
+      env:
+        - MB_PYTHON_VERSION=3.8
+    - os: linux
+      env:
+        - MB_PYTHON_VERSION=3.8
+        - PLAT=i686
     - os: osx
       env:
         - MB_PYTHON_VERSION=2.7
@@ -77,7 +91,6 @@ matrix:
     - os: osx
       env:
         - MB_PYTHON_VERSION=3.8
-
 
 before_install:
     - source multibuild/common_utils.sh
