@@ -2,7 +2,7 @@ env:
     global:
         - REPO_DIR=cvxopt
         # Commit from your-project that you want to build
-        - BUILD_COMMIT=HEAD
+        - BUILD_COMMIT=1.2.4
         # pip dependencies to _build_ your project
         - BUILD_DEPENDS=""
         # pip dependencies to _test_ your project.  Include any dependencies
@@ -98,7 +98,7 @@ after_success:
     # This uploads the wheels to a Rackspace container owned by the
     # scikit-learn team, available at http://wheels.scipy.org.  See above
     # for information on using this account or choosing another.
-    #- python -m wheelhouse_uploader upload --local-folder
-    #    ${TRAVIS_BUILD_DIR}/wheelhouse/
-    #    --no-update-index
-    #    wheels
+    - python -m wheelhouse_uploader upload --local-folder
+        ${TRAVIS_BUILD_DIR}/wheelhouse/
+        --no-update-index
+        wheels
