@@ -24,6 +24,7 @@ services: docker
 dist: xenial
 
 matrix:
+matrix:
   include:
     - os: linux
       env: MB_PYTHON_VERSION=2.7
@@ -45,39 +46,32 @@ matrix:
         - MB_PYTHON_VERSION=3.5
     - os: linux
       env:
-        - MB_PYTHON_VERSION=3.5
-        - PLAT=i686
-    - os: linux
-      env:
         - MB_PYTHON_VERSION=3.6
     - os: linux
-      env:
-        - MB_PYTHON_VERSION=3.6
-        - PLAT=i686
-    - os: osx
-      env:
-        - MB_PYTHON_VERSION=2.7
-        - MB_PYTHON_OSX_VER=10.6
-    - os: osx
-      env:
-        - MB_PYTHON_VERSION=2.7
-    - os: osx
-      env:
-        - MB_PYTHON_VERSION=3.5
-    - os: osx
-      env:
-        - MB_PYTHON_VERSION=3.6
-    - os: osx
       env:
         - MB_PYTHON_VERSION=3.7
+    - os: linux
+      env:
+        - MB_PYTHON_VERSION=3.8
+    - os: osx
+      env:
+        - MB_PYTHON_VERSION=2.7
         - MB_PYTHON_OSX_VER=10.6
+    - os: osx
+      env:
+        - MB_PYTHON_VERSION=2.7
+    - os: osx
+      env:
+        - MB_PYTHON_VERSION=3.5
+    - os: osx
+      env:
+        - MB_PYTHON_VERSION=3.6
     - os: osx
       env:
         - MB_PYTHON_VERSION=3.7
     - os: osx
       env:
         - MB_PYTHON_VERSION=3.8
-
 
 before_install:
     - source multibuild/common_utils.sh
