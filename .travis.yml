@@ -26,21 +26,21 @@ dist: xenial
 matrix:
 matrix:
   include:
-    # - os: linux
-    #   env: MB_PYTHON_VERSION=2.7
-    # - os: linux
-    #   env:
-    #     - MB_PYTHON_VERSION=2.7
-    #     - UNICODE_WIDTH=16
-    # - os: linux
-    #   env:
-    #     - MB_PYTHON_VERSION=2.7
-    #     - PLAT=i686
-    # - os: linux
-    #   env:
-    #     - MB_PYTHON_VERSION=2.7
-    #     - PLAT=i686
-    #     - UNICODE_WIDTH=16
+    - os: linux
+      env: MB_PYTHON_VERSION=2.7
+    - os: linux
+      env:
+        - MB_PYTHON_VERSION=2.7
+        - UNICODE_WIDTH=16
+    - os: linux
+      env:
+        - MB_PYTHON_VERSION=2.7
+        - PLAT=i686
+    - os: linux
+      env:
+        - MB_PYTHON_VERSION=2.7
+        - PLAT=i686
+        - UNICODE_WIDTH=16
     - os: linux
       env:
         - MB_PYTHON_VERSION=3.5
@@ -53,31 +53,30 @@ matrix:
     - os: linux
       env:
         - MB_PYTHON_VERSION=3.8
-    # - os: osx
-    #   env:
-    #     - MB_PYTHON_VERSION=2.7
-    #     - MB_PYTHON_OSX_VER=10.6
-    # - os: osx
-    #   env:
-    #     - MB_PYTHON_VERSION=2.7
-    # - os: osx
-    #   env:
-    #     - MB_PYTHON_VERSION=3.5
-    # - os: osx
-    #   env:
-    #     - MB_PYTHON_VERSION=3.6
-    # - os: osx
-    #   env:
-    #     - MB_PYTHON_VERSION=3.7
-    # - os: osx
-    #   env:
-    #     - MB_PYTHON_VERSION=3.8
+    - os: osx
+      env:
+        - MB_PYTHON_VERSION=2.7
+        - MB_PYTHON_OSX_VER=10.6
+    - os: osx
+      env:
+        - MB_PYTHON_VERSION=2.7
+    - os: osx
+      env:
+        - MB_PYTHON_VERSION=3.5
+    - os: osx
+      env:
+        - MB_PYTHON_VERSION=3.6
+    - os: osx
+      env:
+        - MB_PYTHON_VERSION=3.7
+    - os: osx
+      env:
+        - MB_PYTHON_VERSION=3.8
 
 before_install:
     - source multibuild/common_utils.sh
     - source multibuild/travis_steps.sh
     - before_install
-    - pushd $REPO_DIR/../multibuild; git apply ../pip20.patch; popd
 
 install:
     # Maybe get and clean and patch source
