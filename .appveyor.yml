@@ -59,9 +59,8 @@ install:
     - wget -nv https://github.com/DrTimothyAldenDavis/SuiteSparse/archive/v%SUITESPARSE_VERSION%.tar.gz -O SuiteSparse-%SUITESPARSE_VERSION%.tar.gz
     - checksum -t sha256 -c %SUITESPARSE_SHA256% SuiteSparse-%SUITESPARSE_VERSION%.tar.gz
     - mkdir SuiteSparse
-    - 7z x -bso0 -bsp0 SuiteSparse-%SUITESPARSE_VERSION%.tar.gz && 7z x -bso0 -bsp0 SuiteSparse-%SUITESPARSE_VERSION%.tar -oSuiteSparse
-    - sh.exe -c "mv SuiteSparse/Dr*/* SuiteSparse/"
-    - SET CVXOPT_SUITESPARSE_SRC_DIR=%cd%\SuiteSparse
+    - 7z x -bso0 -bsp0 SuiteSparse-%SUITESPARSE_VERSION%.tar.gz && 7z x -bso0 -bsp0 SuiteSparse-%SUITESPARSE_VERSION%.tar
+    - SET CVXOPT_SUITESPARSE_SRC_DIR=%cd%\SuiteSparse-%SUITESPARSE_VERSION%
 
     # Download and build GLPK
     - if [%CVXOPT_BUILD_GLPK%]==[1] (
