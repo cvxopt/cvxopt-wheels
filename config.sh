@@ -16,10 +16,10 @@ function pre_build {
 
     # Download SuiteSparse
     if [ ! -e suitesparse-stamp ]; then
-	mkdir -p archives
-	curl -L https://api.github.com/repos/DrTimothyAldenDavis/SuiteSparse/tarball/v${SUITESPARSE_VERSION} > archives/SuiteSparse-${SUITESPARSE_VERSION}.tar.gz	
-        check_sha256sum archives/SuiteSparse-${SUITESPARSE_VERSION}.tar.gz ${SUITESPARSE_SHA256}
-	mkdir SuiteSparse && tar -xf archives/SuiteSparse-${SUITESPARSE_VERSION}.tar.gz -C SuiteSparse --strip-components 1
+		mkdir -p archives
+		curl -L https://github.com/DrTimothyAldenDavis/SuiteSparse/archive/v${SUITESPARSE_VERSION}.tar.gz > archives/SuiteSparse-${SUITESPARSE_VERSION}.tar.gz
+    	check_sha256sum archives/SuiteSparse-${SUITESPARSE_VERSION}.tar.gz ${SUITESPARSE_SHA256}
+		mkdir SuiteSparse && tar -xf archives/SuiteSparse-${SUITESPARSE_VERSION}.tar.gz -C SuiteSparse --strip-components 1
         touch suitesparse-stamp
     fi
 
