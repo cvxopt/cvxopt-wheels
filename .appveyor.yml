@@ -1,40 +1,25 @@
 version: 1.2.5.{build}-{branch}
 image: Visual Studio 2019
-init:
-    - choco install wget checksum
 
 environment:
-  global:
     REPO_DIR: "cvxopt"
     PACKAGE_NAME: "cvxopt"
     BUILD_COMMIT: "1.2.5"
-    BUILD_DEPENDS: "wheel"
+    BUILD_DEPENDS: "setuptools wheel"
     TEST_DEPENDS: "pytest"
+    DEPLOY_DEPENDS: "twine"
     CVXOPT_BUILD_DSDP: "0"
     CVXOPT_BUILD_GLPK: "1"
-    GLPK_VERSION: "4.65"
-    GLPK_SHA256: "4281e29b628864dfe48d393a7bedd781e5b475387c20d8b0158f329994721a10"
-    SUITESPARSE_VERSION: "5.8.1"
-    SUITESPARSE_SHA256: "06726e471fbaa55f792578f9b4ab282ea9d008cf39ddcc3b42b73400acddef40"
-    OPENBLAS_VERSION: 0.3.10
-    OPENBLAS_SHA256_x64: a307629479260ebfed057a3fc466d2be83a2bb594739a99c06ec830173273135
-    OPENBLAS_SHA256_x86: 7eab2be38e4c79f0ce496e7cb3ae28be457aef1b21e70eb7e32147b479b7bb57
-    OPENBLAS_SHA256_x64_anaconda: e5356a2aa4aa7ed9233b2ca199fdd445f55ba227f004ebc63071dfa2426e9b09
-    OPENBLAS_SHA256_x86_anaconda: af1ad3172b23f7c6ef2234151a71d3be4d92010dad4dfb25d07cf5a20f009202
+    CVXOPT_MSVC: "1"
+    TWINE_USERNAME: "__token__"
+    TWINE_PASSWORD:    
+        secure: 4zJCT875BtQ2jzr0umkkTkI3EQY0e+lzS/zFoDogDuGG/Wi6b20HHoeDIn8ZRVtSd9PS6mCfjRmcyCI1fagQuax8I0X+cnTh2Y/dRoBiTGIY1LDmQHIsz/BBX0TsJGfggx3wSJYDgEBspSXIPrT387KXid1hbCV2nFrvzgqW8BAuOJXFcl3vu5yTgorM0IBiIPOpXaK3f1+Qfm5KwFHFFGWlsafviQTxrJivp8ErS7O5zO4PCoWWfde09nMR9alsJ04o9l2cVaguWszVUkOU9Q==
 
-  matrix:
-#    - PYTHON_VERSION: "3.9"
-#      CVXOPT_MSVC: "1"
-#    - PYTHON_VERSION: "3.8"
-#      CVXOPT_MSVC: "1"
-#    - PYTHON_VERSION: "3.7"
-#      CVXOPT_MSVC: "1"
-#    - PYTHON_VERSION: "3.6"
-#      CVXOPT_MSVC: "1"
-#    - PYTHON_VERSION: "3.5"
-#      CVXOPT_MSVC: "1"
-    - PYTHON_VERSION: "2.7"
-      COMPILER: mingwpy
+    matrix:
+        - PYTHON_VERSION: "3.8"
+        - PYTHON_VERSION: "3.7"
+        - PYTHON_VERSION: "3.6"
+        - PYTHON_VERSION: "3.5"
 
 platform:
     - x64
@@ -44,111 +29,70 @@ matrix:
     fast_finish: true
 
 install:
-    - if [%PLATFORM%]==[x64] (
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat" &
-        set "PYTHON_DIR=C:\Python%PYTHON_VERSION:.=%-x64" &
-        set "PLAT_NAME=win-amd64" &
-        set OPENBLAS_SHA256=%OPENBLAS_SHA256_x64% &
-        if [%COMPILER%]==[mingwpy] ( set OPENBLAS_SHA256=%OPENBLAS_SHA256_x64_anaconda% )
-      ) else (
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars32.bat" &
-        set "PYTHON_DIR=C:\Python%PYTHON_VERSION:.=%" &
-        set "PLAT_NAME=win32" &
-        set OPENBLAS_SHA256=%OPENBLAS_SHA256_x86% &
-        if [%COMPILER%]==[mingwpy] ( set OPENBLAS_SHA256=%OPENBLAS_SHA256_x86_anaconda% )
-      )
+    # Configure build environment
+    - cmd: |
+        choco install wget checksum
+        if [%PLATFORM%]==[x64] ( set "TARGET_ARCH=64" ) else ( set "TARGET_ARCH=32" ) 
+        if [%PLATFORM%]==[x64] ( set "PLAT_NAME=win-amd64" ) else ( set "PLAT_NAME=win32" ) 
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars%TARGET_ARCH%.bat"
+        set PYTHON_DIR=C:\Python%PYTHON_VERSION:.=%
+        if [%PLATFORM%]==[x64] ( set "PYTHON_DIR=%PYTHON_DIR%-x64" )
+        set "PATH=%PYTHON_DIR%;%PYTHON_DIR%\Scripts;%ProgramFiles%\7-Zip;%PATH%"
+        python --version
+        python -c "import struct; print(struct.calcsize('P') * 8)"
+        python -m pip install --upgrade pip
+        pip install --upgrade %BUILD_DEPENDS% 
 
-    # Check that we have the expected version and architecture for Python
-    - SET "PATH=%PYTHON_DIR%;%PYTHON_DIR%\Scripts;%ProgramFiles%\7-Zip;%PATH%"
-    - echo %PYTHON_DIR%
-    - python --version
-    - python -c "import struct; print(struct.calcsize('P') * 8)"
-    - if [%COMPILER%]==[mingwpy] ( pip install -i https://pypi.anaconda.org/carlkl/simple mingwpy )
+    # Configure OpenBLAS, SuiteSparse, GLPK
+    - cmd: |
+        call .ci-support\config_openblas.bat 
+        call .ci-support\config_suitesparse_src.bat
+        if [%CVXOPT_BUILD_GLPK%]==[1] ( call .ci-support\config_glpk.bat )
 
-    # Download OpenBLAS    
-    - if [%COMPILER%]==[mingwpy] ( 
-        if [%PLATFORM%]==[x64] ( set ARCH_TARGET=64 ) else ( set ARCH_TARGET=32 ) &&
-        wget -nv https://anaconda.org/multibuild-wheels-staging/openblas-libs/v%OPENBLAS_VERSION%/download/openblas-v%OPENBLAS_VERSION%-$PLAT_NAME%-gcc_7_1_0.zip &&
-        checksum -t sha256 -c %OPENBLAS_SHA256% openblas-v%OPENBLAS_VERSION%-$PLAT_NAME%-gcc_7_1_0.zip &&
-        mkdir OpenBLAS &&
-        7z x -oOpenBLAS -bso0 -bsp0 openblas-v%OPENBLAS_VERSION%-$PLAT_NAME%-gcc_7_1_0.zip &&
-        set "CVXOPT_BLAS_LIB=openblas_v%OPENBLAS_VERSION%-gcc_7_1_0" &&
-        set "CVXOPT_LAPACK_LIB=openblas_v%OPENBLAS_VERSION%-gcc_7_1_0" &&
-        set "CVXOPT_BLAS_LIB_DIR=%cd%\OpenBLAS\%ARCH_TARGET%\lib" &&
-        set "OPENBLAS_DLL=%cd%\OpenBLAS\%ARCH_TARGET%\bin\lib%CVXOPT_BLAS_LIB%.dll"
-      ) else (
-        wget -nv https://github.com/xianyi/OpenBLAS/releases/download/v%OPENBLAS_VERSION%/OpenBLAS-%OPENBLAS_VERSION%-%PLATFORM%.zip &&
-        checksum -t sha256 -c %OPENBLAS_SHA256% OpenBLAS-%OPENBLAS_VERSION%-%PLATFORM%.zip &&
-        mkdir OpenBLAS &&
-        7z x -oOpenBLAS -bso0 -bsp0 OpenBLAS-%OPENBLAS_VERSION%-%PLATFORM%.zip &&
-        set "CVXOPT_BLAS_LIB=libopenblas" &&
-        set "CVXOPT_LAPACK_LIB=libopenblas" &&
-        set "CVXOPT_BLAS_LIB_DIR=%cd%\OpenBLAS\lib" &&
-        set "OPENBLAS_DLL=%cd%\OpenBLAS\bin\libopenblas.dll"
-      )
-    - wget https://raw.githubusercontent.com/xianyi/OpenBLAS/v%OPENBLAS_VERSION%/LICENSE -O LICENSE_OpenBLAS-%OPENBLAS_VERSION% &
-    - set OPENBLAS_LICENSE=%cd%\LICENSE_OpenBLAS-%OPENBLAS_VERSION%        
-    - dir 
-    - echo %CVXOPT_BLAS_LIB%
-    - echo %CVXOPT_LAPACK_LIB%
-    - echo %CVXOPT_BLAS_LIB_DIR%
-
-
-    # Download SuiteSparse and set CVXOPT_SUITESPARSE_SRC_DIR
-    - wget -nv https://github.com/DrTimothyAldenDavis/SuiteSparse/archive/v%SUITESPARSE_VERSION%.tar.gz -O SuiteSparse-%SUITESPARSE_VERSION%.tar.gz
-    - checksum -t sha256 -c %SUITESPARSE_SHA256% SuiteSparse-%SUITESPARSE_VERSION%.tar.gz
-    - mkdir SuiteSparse
-    - 7z x -bso0 -bsp0 SuiteSparse-%SUITESPARSE_VERSION%.tar.gz && 7z x -bso0 -bsp0 SuiteSparse-%SUITESPARSE_VERSION%.tar
-    - SET CVXOPT_SUITESPARSE_SRC_DIR=%cd%\SuiteSparse-%SUITESPARSE_VERSION%
-
-    # Download and build GLPK
-    - if [%CVXOPT_BUILD_GLPK%]==[1] (
-        if [%CVXOPT_MSVC%]==[1] (
-          wget -nv http://ftp.gnu.org/gnu/glpk/glpk-%GLPK_VERSION%.tar.gz &&
-          checksum -t sha256 -c %GLPK_SHA256% glpk-%GLPK_VERSION%.tar.gz &&
-          7z x -bso0 -bsp0 glpk-%GLPK_VERSION%.tar.gz && 7z x -bso0 -bsp0 glpk-%GLPK_VERSION%.tar &&
-          cd glpk-%GLPK_VERSION%\w64 &&
-          copy config_VC config.h &&
-          nmake /f Makefile_VC glpk.lib &&
-          cd ..\.. &&
-          SET "CVXOPT_GLPK_LIB_DIR=%cd%\glpk-%GLPK_VERSION%\w64" &&
-          SET "CVXOPT_GLPK_INC_DIR=%cd%\glpk-%GLPK_VERSION%\src"
-        ) else (
-          appveyor AddMessage "Disabled GLPK extension" -Category Warning &&
-          SET "CVXOPT_BUILD_GLPK=0"
-        )
-      )
-    
-    - python -m pip install --upgrade pip
-    - pip install %BUILD_DEPENDS% 
-    - git submodule update --init --recursive
+before_build:
+    - cmd: |
+        git submodule update --init --recursive
 
 build_script:
-    # Build wheel
-    - cd %REPO_DIR%
-    - git checkout %BUILD_COMMIT%
-    - if [%COMPILER%]==[mingwpy] ( python setup.py build --compiler=mingw32 )
-      else ( python setup.py build --compiler=msvc )
-    - set build_dir=build\lib.%PLAT_NAME%-%PYTHON_VERSION%\cvxopt
-    - mkdir %build_dir%\.lib
-    - copy %OPENBLAS_DLL% %build_dir%\.lib
-    - copy %OPENBLAS_LICENSE% %build_dir%
-    - python ..\.ci-support\_add_bootstrap.py %build_dir%  
-    - python setup.py bdist_wheel
-    - ls dist/*
+    - cmd: |
+        cd %REPO_DIR%
+        git checkout %BUILD_COMMIT%
+        python setup.py build --compiler=msvc
+
+after_build:
+    - cmd: |
+        set build_dir=build\lib.%PLAT_NAME%-%PYTHON_VERSION%\cvxopt
+        mkdir %build_dir%\.lib
+        copy %OPENBLAS_DLL% %build_dir%\.lib
+        copy %OPENBLAS_LICENSE% %build_dir%
+        python ..\.ci-support\_add_bootstrap.py %build_dir%
+        python setup.py bdist_wheel
+        ls dist/*
+
+before_test:
+    - cmd: |
+        pip install --upgrade %TEST_DEPENDS% 
+        pip install --no-index --find-links dist\ %PACKAGE_NAME%
 
 test_script:
-    - pip install %TEST_DEPENDS% 
-    - pip install --no-index --find-links dist/ %PACKAGE_NAME%
-
-    # Run tests
-    - python --version
-    - python -c "from cvxopt import blas,lapack,cholmod,umfpack"
-    - if [%CVXOPT_BUILD_DSDP%]==[1] ( python -c "from cvxopt import dsdp" )
-    - if [%CVXOPT_BUILD_FFTW%]==[1] ( python -c "from cvxopt import fftw" )
-    - if [%CVXOPT_BUILD_GLPK%]==[1] ( python -c "from cvxopt import glpk" )
-    - if [%CVXOPT_BUILD_GSL%]==[1] ( python -c "from cvxopt import gsl" )
-    - pytest
+    - cmd: |
+        python --version
+        python -c "from cvxopt import blas,lapack,cholmod,umfpack"
+        if [%CVXOPT_BUILD_DSDP%]==[1] ( python -c "from cvxopt import dsdp" )
+        if [%CVXOPT_BUILD_FFTW%]==[1] ( python -c "from cvxopt import fftw" )
+        if [%CVXOPT_BUILD_GLPK%]==[1] ( python -c "from cvxopt import glpk" )
+        if [%CVXOPT_BUILD_GSL%]==[1] ( python -c "from cvxopt import gsl" )
+        pytest
 
 artifacts:
-    - path: cvxopt/dist/*.whl
+    - path: cvxopt\dist\*.whl
+      name: Wheels
+
+#before_deploy:
+#    - cmd: |
+#        set pypi_repo=https://upload.pypi.org/legacy/
+#        set pypi_testrepo=https://test.pypi.org/legacy/ 
+#        pip install --upgrade %DEPLOY_DEPENDS% 
+
+#deploy_script:
+#    - cmd: python -m twine upload --verbose --skip-existing --repository-url %pypi_testrepo% dist\*.whl
