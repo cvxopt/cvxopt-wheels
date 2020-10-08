@@ -12,8 +12,6 @@ environment:
     TEST_DEPENDS: "pytest"
     CVXOPT_BUILD_DSDP: "0"
     CVXOPT_BUILD_GLPK: "1"
-    CVXOPT_BLAS_LIB: "libopenblas"
-    CVXOPT_LAPACK_LIB: "libopenblas"
     GLPK_VERSION: "4.65"
     GLPK_SHA256: "4281e29b628864dfe48d393a7bedd781e5b475387c20d8b0158f329994721a10"
     SUITESPARSE_VERSION: "5.8.1"
@@ -21,18 +19,20 @@ environment:
     OPENBLAS_VERSION: 0.3.10
     OPENBLAS_SHA256_x64: a307629479260ebfed057a3fc466d2be83a2bb594739a99c06ec830173273135
     OPENBLAS_SHA256_x86: 7eab2be38e4c79f0ce496e7cb3ae28be457aef1b21e70eb7e32147b479b7bb57
+    OPENBLAS_SHA256_x64_anaconda: e5356a2aa4aa7ed9233b2ca199fdd445f55ba227f004ebc63071dfa2426e9b09
+    OPENBLAS_SHA256_x86_anaconda: af1ad3172b23f7c6ef2234151a71d3be4d92010dad4dfb25d07cf5a20f009202
 
   matrix:
 #    - PYTHON_VERSION: "3.9"
 #      CVXOPT_MSVC: "1"
-    - PYTHON_VERSION: "3.8"
-      CVXOPT_MSVC: "1"
-    - PYTHON_VERSION: "3.7"
-      CVXOPT_MSVC: "1"
-    - PYTHON_VERSION: "3.6"
-      CVXOPT_MSVC: "1"
-    - PYTHON_VERSION: "3.5"
-      CVXOPT_MSVC: "1"
+#    - PYTHON_VERSION: "3.8"
+#      CVXOPT_MSVC: "1"
+#    - PYTHON_VERSION: "3.7"
+#      CVXOPT_MSVC: "1"
+#    - PYTHON_VERSION: "3.6"
+#      CVXOPT_MSVC: "1"
+#    - PYTHON_VERSION: "3.5"
+#      CVXOPT_MSVC: "1"
     - PYTHON_VERSION: "2.7"
       COMPILER: mingwpy
 
@@ -48,12 +48,14 @@ install:
         call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat" &
         set "PYTHON_DIR=C:\Python%PYTHON_VERSION:.=%-x64" &
         set "PLAT_NAME=win-amd64" &
-        set OPENBLAS_SHA256=%OPENBLAS_SHA256_x64%
+        set OPENBLAS_SHA256=%OPENBLAS_SHA256_x64% &
+        if [%COMPILER%]==[mingwpy] ( set OPENBLAS_SHA256=%OPENBLAS_SHA256_x64_anaconda% )
       ) else (
         call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars32.bat" &
         set "PYTHON_DIR=C:\Python%PYTHON_VERSION:.=%" &
         set "PLAT_NAME=win32" &
-        set OPENBLAS_SHA256=%OPENBLAS_SHA256_x86%
+        set OPENBLAS_SHA256=%OPENBLAS_SHA256_x86% &
+        if [%COMPILER%]==[mingwpy] ( set OPENBLAS_SHA256=%OPENBLAS_SHA256_x86_anaconda% )
       )
 
     # Check that we have the expected version and architecture for Python
@@ -63,15 +65,34 @@ install:
     - python -c "import struct; print(struct.calcsize('P') * 8)"
     - if [%COMPILER%]==[mingwpy] ( pip install -i https://pypi.anaconda.org/carlkl/simple mingwpy )
 
-    # Download OpenBLAS
-    - wget -nv https://github.com/xianyi/OpenBLAS/releases/download/v%OPENBLAS_VERSION%/OpenBLAS-%OPENBLAS_VERSION%-%PLATFORM%.zip
-    - wget https://raw.githubusercontent.com/xianyi/OpenBLAS/v%OPENBLAS_VERSION%/LICENSE -O LICENSE_OpenBLAS-%OPENBLAS_VERSION%
-    - checksum -t sha256 -c %OPENBLAS_SHA256% OpenBLAS-%OPENBLAS_VERSION%-%PLATFORM%.zip
-    - mkdir OpenBLAS
-    - 7z x -oOpenBLAS -bso0 -bsp0 OpenBLAS-%OPENBLAS_VERSION%-%PLATFORM%.zip
-    - set CVXOPT_BLAS_LIB_DIR=%cd%\OpenBLAS\lib
-    - set OPENBLAS_DLL=%cd%\OpenBLAS\bin\libopenblas.dll
-    - set OPENBLAS_LICENSE=%cd%\LICENSE_OpenBLAS-%OPENBLAS_VERSION%
+    # Download OpenBLAS    
+    - if [%COMPILER%]==[mingwpy] ( 
+        if [%PLATFORM%]==[x64] ( set ARCH_TARGET=64 ) else ( set ARCH_TARGET=32 ) &&
+        wget -nv https://anaconda.org/multibuild-wheels-staging/openblas-libs/v%OPENBLAS_VERSION%/download/openblas-v%OPENBLAS_VERSION%-$PLAT_NAME%-gcc_7_1_0.zip &&
+        checksum -t sha256 -c %OPENBLAS_SHA256% openblas-v%OPENBLAS_VERSION%-$PLAT_NAME%-gcc_7_1_0.zip &&
+        mkdir OpenBLAS &&
+        7z x -oOpenBLAS -bso0 -bsp0 openblas-v%OPENBLAS_VERSION%-$PLAT_NAME%-gcc_7_1_0.zip &&
+        set "CVXOPT_BLAS_LIB=openblas_v%OPENBLAS_VERSION%-gcc_7_1_0" &&
+        set "CVXOPT_LAPACK_LIB=openblas_v%OPENBLAS_VERSION%-gcc_7_1_0" &&
+        set "CVXOPT_BLAS_LIB_DIR=%cd%\OpenBLAS\%ARCH_TARGET%\lib" &&
+        set "OPENBLAS_DLL=%cd%\OpenBLAS\%ARCH_TARGET%\bin\lib%CVXOPT_BLAS_LIB%.dll"
+      ) else (
+        wget -nv https://github.com/xianyi/OpenBLAS/releases/download/v%OPENBLAS_VERSION%/OpenBLAS-%OPENBLAS_VERSION%-%PLATFORM%.zip &&
+        checksum -t sha256 -c %OPENBLAS_SHA256% OpenBLAS-%OPENBLAS_VERSION%-%PLATFORM%.zip &&
+        mkdir OpenBLAS &&
+        7z x -oOpenBLAS -bso0 -bsp0 OpenBLAS-%OPENBLAS_VERSION%-%PLATFORM%.zip &&
+        set "CVXOPT_BLAS_LIB=libopenblas" &&
+        set "CVXOPT_LAPACK_LIB=libopenblas" &&
+        set "CVXOPT_BLAS_LIB_DIR=%cd%\OpenBLAS\lib" &&
+        set "OPENBLAS_DLL=%cd%\OpenBLAS\bin\libopenblas.dll"
+      )
+    - wget https://raw.githubusercontent.com/xianyi/OpenBLAS/v%OPENBLAS_VERSION%/LICENSE -O LICENSE_OpenBLAS-%OPENBLAS_VERSION% &
+    - set OPENBLAS_LICENSE=%cd%\LICENSE_OpenBLAS-%OPENBLAS_VERSION%        
+    - dir 
+    - echo %CVXOPT_BLAS_LIB%
+    - echo %CVXOPT_LAPACK_LIB%
+    - echo %CVXOPT_BLAS_LIB_DIR%
+
 
     # Download SuiteSparse and set CVXOPT_SUITESPARSE_SRC_DIR
     - wget -nv https://github.com/DrTimothyAldenDavis/SuiteSparse/archive/v%SUITESPARSE_VERSION%.tar.gz -O SuiteSparse-%SUITESPARSE_VERSION%.tar.gz
@@ -101,7 +122,7 @@ install:
     - python -m pip install --upgrade pip
     - pip install %BUILD_DEPENDS% 
     - git submodule update --init --recursive
-    
+
 build_script:
     # Build wheel
     - cd %REPO_DIR%
@@ -112,7 +133,7 @@ build_script:
     - mkdir %build_dir%\.lib
     - copy %OPENBLAS_DLL% %build_dir%\.lib
     - copy %OPENBLAS_LICENSE% %build_dir%
-    - python ..\.appveyor\_add_bootstrap.py %build_dir%  
+    - python ..\.ci-support\_add_bootstrap.py %build_dir%  
     - python setup.py bdist_wheel
     - ls dist/*
 
