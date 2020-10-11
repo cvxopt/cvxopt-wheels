@@ -1,118 +1,105 @@
 version: 1.2.5.{build}-{branch}
 image: Visual Studio 2019
-init:
-    - choco install wget checksum
+configuration: Release
 
 environment:
-  global:
-    PYTHON: C:\Miniconda37-x64
-    PYTHON_ARCH: "64"
     REPO_DIR: "cvxopt"
     PACKAGE_NAME: "cvxopt"
     BUILD_COMMIT: "1.2.5"
-    BUILD_DEPENDS: "mkl==2018.0.3"
+#    BUILD_SUFFIX: ".post1"
+    BUILD_DEPENDS: "setuptools wheel"
     TEST_DEPENDS: "pytest"
-    CVXOPT_BUILD_DSDP: "0"
+    DEPLOY_DEPENDS: "twine"
     CVXOPT_BUILD_GLPK: "1"
-    CVXOPT_INSTALL_REQUIRES: mkl
-    CVXOPT_BLAS_LIB: "mkl_rt"
-    CVXOPT_LAPACK_LIB: "mkl_rt"
-    GLPK_VERSION: "4.65"
-    GLPK_SHA256: "4281e29b628864dfe48d393a7bedd781e5b475387c20d8b0158f329994721a10"
-    SUITESPARSE_VERSION: "5.7.2"
-    SUITESPARSE_SHA256: "fe3bc7c3bd1efdfa5cffffb5cebf021ff024c83b5daf0ab445429d3d741bd3ad"
+    CVXOPT_MSVC: "1"
+    TWINE_NON_INTERACTIVE: true
+    TWINE_USERNAME: "__token__"
+    # PyPI
+    #TWINE_REPOSITORY_URL: "https://upload.pypi.org/legacy/"
+    #TWINE_PASSWORD:
+    #    secure: "oxRUDfloX5kWUZqLpZxBsRMaxobAFHau6v93I65IhGMzfAMBB4wXN556Bc64gw73x07r174T0cddNFfHZWwyHzxffM1xdFwCAyXBNLG0ChfszYj3/l/toKB4MIn93EFuLNKn9dYxj38s57i8AGKl383rZoGELOW4qSgAm9vALxqfy+wlH7e8vJ69QrNbMG2HycMnPAWTj7qk0BRVY7Et3BNmhrNuqSeRdDlN9w2M/1ZMoNVKRtH7eusU3Mrr6Ah4PIzspNVOkhuqtDXiFhhh6w=="
+    # PyPI-test
+    TWINE_REPOSITORY_URL: "https://test.pypi.org/legacy/"
+    TWINE_PASSWORD:
+        secure: "4zJCT875BtQ2jzr0umkkTjOd0BSVanl/TgrRwz9ssUBQ+0mZ6j3/vVZHSIR2sMziQR0Q5VMOYp/IZuCUyLN+8+NY+jajEVMbnxpbYVdclUCu7CTVkKSZtxNk9mnQ2Ni1Clc9Xl9lH/hM3I/vvlGRXHQQ3bEReFkSxEL72I0Hze+YauDS2O51Pm3XNXDMIGbeInfNtDTzMTS0xwaMLfWLLsQbvnRinDvUKZePYtM5zCLRgoES0czvxMWlpk7bIU0c3M1EpNO8exXX6rQGoV4oYA=="
 
-  matrix:
-    - PYTHON_VERSION: "3.7"
-      CVXOPT_MSVC: "1"
-    - PYTHON_VERSION: "3.6"
-      CVXOPT_MSVC: "1"
-    - PYTHON_VERSION: "3.5"
-      CVXOPT_MSVC: "1"
-    - PYTHON_VERSION: "2.7"
-      COMPILER: mingwpy
+    matrix:
+        - PYTHON_VERSION: "3.8"
+        - PYTHON_VERSION: "3.7"
+        - PYTHON_VERSION: "3.6"
+        - PYTHON_VERSION: "3.5"
 
-# We always use a 64-bit machine, but can build x86 distributions
-# with the TARGET_ARCH variable.
 platform:
     - x64
+    - x86
 
 matrix:
     fast_finish: true
 
 install:
-    - if [%PYTHON_ARCH%]==[64] (
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
-      ) else (
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars32.bat"
-      )
+    # Configure build environment
+    - cmd: |
+        choco install wget checksum
+        if [%PLATFORM%]==[x64] ( set "TARGET_ARCH=64" ) else ( set "TARGET_ARCH=32" ) 
+        if [%PLATFORM%]==[x64] ( set "PLAT_NAME=win-amd64" ) else ( set "PLAT_NAME=win32" ) 
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars%TARGET_ARCH%.bat"
+        set PYTHON_DIR=C:\Python%PYTHON_VERSION:.=%
+        if [%PLATFORM%]==[x64] ( set "PYTHON_DIR=%PYTHON_DIR%-x64" )
+        set "PATH=%PYTHON_DIR%;%PYTHON_DIR%\Scripts;%ProgramFiles%\7-Zip;%PATH%"
+        python --version
+        python -c "import struct; print(struct.calcsize('P') * 8)"
+        python -m pip install --upgrade pip
+        pip install --upgrade %BUILD_DEPENDS% 
 
-    # Set up miniconda build environment
-    - SET "PATH=%PYTHON%;%PYTHON%\Scripts;%PYTHON%\Library\bin;%ProgramFiles%\7-Zip;%PATH%"
-    - conda info
-    - conda create --yes -n build_env python=%PYTHON_VERSION% %BUILD_DEPENDS%
-    - activate build_env
-    - if [%COMPILER%]==[mingwpy] ( pip install -i https://pypi.anaconda.org/carlkl/simple mingwpy )
-    - SET CVXOPT_BLAS_LIB_DIR=%PYTHON%\envs\build_env\Library\lib
+    # Configure OpenBLAS, SuiteSparse, GLPK
+    - cmd: |
+        call .ci-support\config_openblas.bat 
+        call .ci-support\config_suitesparse_src.bat
+        if [%CVXOPT_BUILD_GLPK%]==[1] ( call .ci-support\config_glpk.bat )
 
-    # Download SuiteSparse and set CVXOPT_SUITESPARSE_SRC_DIR
-    - wget -nv https://github.com/DrTimothyAldenDavis/SuiteSparse/archive/v%SUITESPARSE_VERSION%.tar.gz -O SuiteSparse-%SUITESPARSE_VERSION%.tar.gz
-    - checksum -t sha256 -c %SUITESPARSE_SHA256% SuiteSparse-%SUITESPARSE_VERSION%.tar.gz
-    - mkdir SuiteSparse
-    - 7z x -bso0 -bsp0 SuiteSparse-%SUITESPARSE_VERSION%.tar.gz && 7z x -bso0 -bsp0 SuiteSparse-%SUITESPARSE_VERSION%.tar
-    - SET CVXOPT_SUITESPARSE_SRC_DIR=%cd%\SuiteSparse-%SUITESPARSE_VERSION%
-
-    # Download and build GLPK
-    - if [%CVXOPT_BUILD_GLPK%]==[1] (
-        if [%CVXOPT_MSVC%]==[1] (
-          wget -nv http://ftp.gnu.org/gnu/glpk/glpk-%GLPK_VERSION%.tar.gz &&
-          checksum -t sha256 -c %GLPK_SHA256% glpk-%GLPK_VERSION%.tar.gz &&
-          7z x -bso0 -bsp0 glpk-%GLPK_VERSION%.tar.gz && 7z x -bso0 -bsp0 glpk-%GLPK_VERSION%.tar &&
-          cd glpk-%GLPK_VERSION%\w64 &&
-          copy config_VC config.h &&
-          nmake /f Makefile_VC glpk.lib &&
-          cd ..\.. &&
-          SET "CVXOPT_GLPK_LIB_DIR=%cd%\glpk-%GLPK_VERSION%\w64" &&
-          SET "CVXOPT_GLPK_INC_DIR=%cd%\glpk-%GLPK_VERSION%\src"
-        ) else (
-          appveyor AddMessage "Disabled GLPK extension" -Category Warning &&
-          SET "CVXOPT_BUILD_GLPK=0"
-        )
-      )
-
-    # Check that we have the expected version and architecture for Python
-    - python --version
-    - python -c "import struct; print(struct.calcsize('P') * 8)"
-
-    # Clone CVXOPT
-    - git clone https://github.com/cvxopt/cvxopt.git
+before_build:
+    - cmd: |
+        git submodule update --init --recursive
 
 build_script:
-    # Build wheel
-    - cd %REPO_DIR%
-    - git checkout %BUILD_COMMIT%
-    - if [%COMPILER%]==[mingwpy] ( python setup.py build --compiler=mingw32 )
-      else ( python setup.py build --compiler=msvc )
-    - python setup.py bdist_wheel
-    - ls dist/*
+    - cmd: |
+        cd %REPO_DIR%
+        git checkout %BUILD_COMMIT%     
+        if defined BUILD_SUFFIX ( git tag %BUILD_COMMIT%%BUILD_SUFFIX% %BUILD_COMMIT% && git tag -d %BUILD_COMMIT% && git checkout %BUILD_COMMIT%%BUILD_SUFFIX% )               
+        python setup.py build --compiler=msvc
+
+after_build:
+    - cmd: |
+        set build_dir=build\lib.%PLAT_NAME%-%PYTHON_VERSION%\cvxopt
+        mkdir %build_dir%\.lib
+        copy %OPENBLAS_DLL% %build_dir%\.lib
+        copy %OPENBLAS_LICENSE% %build_dir%
+        python ..\.ci-support\_add_bootstrap.py %build_dir%
+        python setup.py bdist_wheel
+        ls dist/*
+
+before_test:
+    - cmd: |
+        pip install --upgrade %TEST_DEPENDS% 
+        pip install --no-index --find-links dist\ %PACKAGE_NAME%
 
 test_script:
-    # Create test env
-    - conda create --yes -n test_env python=%PYTHON_VERSION% %TEST_DEPENDS%
-    - activate test_env
-
-    # Install from wheel
-    - pip install %CVXOPT_INSTALL_REQUIRES%
-    - pip install --no-index --find-links dist/ %PACKAGE_NAME%
-
-    # Run tests
-    - python --version
-    - python -c "from cvxopt import blas,lapack,cholmod,umfpack"
-    - if [%CVXOPT_BUILD_DSDP%]==[1] ( python -c "from cvxopt import dsdp" )
-    - if [%CVXOPT_BUILD_FFTW%]==[1] ( python -c "from cvxopt import fftw" )
-    - if [%CVXOPT_BUILD_GLPK%]==[1] ( python -c "from cvxopt import glpk" )
-    - if [%CVXOPT_BUILD_GSL%]==[1] ( python -c "from cvxopt import gsl" )
-    - pytest
+    - cmd: |
+        python --version
+        python -c "from cvxopt import blas,lapack,cholmod,umfpack"
+        if [%CVXOPT_BUILD_DSDP%]==[1] ( python -c "from cvxopt import dsdp" )
+        if [%CVXOPT_BUILD_FFTW%]==[1] ( python -c "from cvxopt import fftw" )
+        if [%CVXOPT_BUILD_GLPK%]==[1] ( python -c "from cvxopt import glpk" )
+        if [%CVXOPT_BUILD_GSL%]==[1] ( python -c "from cvxopt import gsl" )
+        pytest
 
 artifacts:
-    - path: cvxopt/dist/*.whl
+    - path: cvxopt\dist\*.whl
+      name: Wheels
+
+#before_deploy:
+#    - cmd: |
+#        pip install --upgrade %DEPLOY_DEPENDS% 
+
+#deploy_script:
+#    - cmd: python -m twine upload --verbose --skip-existing dist\*.whl

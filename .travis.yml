@@ -1,29 +1,17 @@
 env:
     global:
+        - WHEELHOUSE_UPLOAD=0
         - REPO_DIR=cvxopt
-        # Commit from your-project that you want to build
         - BUILD_COMMIT=1.2.5
-        # pip dependencies to _build_ your project
         - BUILD_DEPENDS=""
-        # pip dependencies to _test_ your project.  Include any dependencies
-        # that you need, that are also specified in BUILD_DEPENDS, this will be
-        # a separate install.
         - TEST_DEPENDS="pytest"
         - PLAT=x86_64
         - UNICODE_WIDTH=32
-        - WHEELHOUSE_UPLOADER_USERNAME=travis-worker
-        # Following generated with
-        # travis encrypt -r cvxopt/cvxopt-wheels WHEELHOUSE_UPLOADER_SECRET=<the api key>
-        # This is for Rackspace uploads.  Contact Matthew Brett, or the
-        # scikit-learn team, if you need to update this key.
-        - secure:
-            "sk01T3Fu+UGpe7F/Px8Wabj4zx6Kv56OJNzazd/W11nMqgtRcB+OrS9A3gORCoTaqk8KeTyD2+uy9UDhgPw0CJZOIxWEVH3u4iWAQegYdcRaz8ZF5yCLYTV5fND5IyWm72xlL0LfckAotD7/j/3xbttY8Epiz1etAvGFmpY1W5dZYWa1ML6ioqCYPDZTq3sN/AU9nDOsn6FtX62+iNf8qc1WV/Vbc3fKrZIeTqLuqkrqKET3BOhOwcCSSRfLO+Nl26lioJ+aeDhQ0SWLChj/zOHyBlKHJfd05KxDcb7l0+65BbRKq1l52DNg+ZCie5KlpItQoGK6BpLl8nf7HSyiHoGMpTFsZ9Xx3CNq+6L7AnFkVJxTjKYDSIP4L+ENh81KRuOpCzSvCjRQz6Ke5mWVnsRncZeXmaY//gjgIAlPgyKN/rU7TwOXzz3NWoQrrVOt8EO8uiaO6w8llStB1fkKq+YIe/KgUATtjWYjXjHiaV1vjQCSGkB0K+ljaxun+rxLuNRC2mBioiiXG3GPWIoXoxD5aVPxQxK9r492LzeuAL6+5FtcntE/v9YDmP1PuLWHzyjajErq0INvrrqOzB2u/RJTS5+BV5Emlf+ryX2Z/hcI/lKhUtMxgEt8cWk+lhLiwhlHQRJkkw+L4MVULS0+LbPTTEdJ1zMI3bzWdy1wlOk="
 
 language: generic
 services: docker
 dist: xenial
 
-matrix:
 matrix:
   include:
     - os: linux
@@ -53,6 +41,9 @@ matrix:
     - os: linux
       env:
         - MB_PYTHON_VERSION=3.8
+    - os: linux
+      env:
+        - MB_PYTHON_VERSION=3.9
     - os: osx
       env:
         - MB_PYTHON_VERSION=2.7
@@ -72,6 +63,10 @@ matrix:
     - os: osx
       env:
         - MB_PYTHON_VERSION=3.8
+    - os: osx
+      env:
+        - MB_PYTHON_VERSION=3.9
+        
 
 before_install:
     - source multibuild/common_utils.sh
@@ -79,20 +74,21 @@ before_install:
     - before_install
 
 install:
-    # Maybe get and clean and patch source
     - clean_code $REPO_DIR $BUILD_COMMIT
     - build_wheel $REPO_DIR $PLAT
 
 script:
     - install_run $PLAT
 
-after_success:
-    # Upload wheels to Rackspace container
-    - pip install wheelhouse-uploader
-    # This uploads the wheels to a Rackspace container owned by the
-    # scikit-learn team, available at http://wheels.scipy.org.  See above
-    # for information on using this account or choosing another.
-    - python -m wheelhouse_uploader upload --local-folder
-        ${TRAVIS_BUILD_DIR}/wheelhouse/
-        --no-update-index
-        wheels
+before_deploy: cd ${TRAVIS_BUILD_DIR}/wheelhouse
+deploy:
+  skip_cleanup: true
+  provider: cloudfiles
+  username: martinandersen
+  api_key:
+    secure: "VRSaOLmsDN67+mly3YmOpgedJvwBnlVif3ZHIU9lBDQtbthiGu9lcnEY5kiT6EMU9iONxPg2ibWpykkepeRfyUB6wK7Nz45y3cnhKbeisPISKQO4JtjdWNnzjFFsBwaviAsOy3GlhbmNy9PUPPcCgui19Mv4XV0ww7Kyrt6G1V11JRjQkPY1fKBy2eUBbKnfpl3lqNERyCCg75FxdF/RYyneTHnUDvDUb4qcNgO4MJyrB8nus3S5VtEIH4HdoWZbzo0RMu3UE4MiC9PyJOE2MVndcRxXkR1jeI+Yx+A8nlOp2wAtdAe11yDtf2afiw9Ji65+npILLAi+0xrXJ/NQXorAJDsLZkGW2LiMihw7vOvph+yIFYaRfcD3UVe71OOuTf+DALLrczeXkUf5b3NiqvPCO+xCklfYJkR+vgfNR+zyOex4PH7YrNke3Pb9eySCdjQF3SWBG3q5iPNxOATb51YZf93FmRQClEg87ECpQA1nJh2N+nIPX+qF4DGzqjMfjPgliv3wcXpzzpEGVuDI0QFP3ZDuEU4qBFNevqFfOlXb13O5JH+czjtnkFOyKK7CcxhhkT+MqDI+JzOCuaLDufLjh1gI3JpMO3pFtsLqnMGqFJBVEOyMo1gRsveOM/wsJ6pbo85irTAd4BRjmY1i3iaUzNy/rXleLNrJMZ6qluo="
+  region: IAD
+  container: wheelhouse
+  on:
+    repo: cvxopt/cvxopt-wheels
+    condition: $WHEELHOUSE_UPLOAD = 1
