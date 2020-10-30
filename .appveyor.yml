@@ -24,6 +24,7 @@ environment:
         secure: "4zJCT875BtQ2jzr0umkkTjOd0BSVanl/TgrRwz9ssUBQ+0mZ6j3/vVZHSIR2sMziQR0Q5VMOYp/IZuCUyLN+8+NY+jajEVMbnxpbYVdclUCu7CTVkKSZtxNk9mnQ2Ni1Clc9Xl9lH/hM3I/vvlGRXHQQ3bEReFkSxEL72I0Hze+YauDS2O51Pm3XNXDMIGbeInfNtDTzMTS0xwaMLfWLLsQbvnRinDvUKZePYtM5zCLRgoES0czvxMWlpk7bIU0c3M1EpNO8exXX6rQGoV4oYA=="
 
     matrix:
+        - PYTHON_VERSION: "3.9"
         - PYTHON_VERSION: "3.8"
         - PYTHON_VERSION: "3.7"
         - PYTHON_VERSION: "3.6"
@@ -97,9 +98,9 @@ artifacts:
     - path: cvxopt\dist\*.whl
       name: Wheels
 
-#before_deploy:
-#    - cmd: |
-#        pip install --upgrade %DEPLOY_DEPENDS% 
+before_deploy:
+    - cmd: |
+        pip install --upgrade %DEPLOY_DEPENDS% 
 
-#deploy_script:
-#    - cmd: python -m twine upload --verbose --skip-existing dist\*.whl
+deploy_script:
+    - cmd: python -m twine upload --verbose --skip-existing dist\*.whl
