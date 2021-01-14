@@ -2,7 +2,7 @@ env:
     global:
         - WHEELHOUSE_UPLOAD=0
         - REPO_DIR=cvxopt
-        - BUILD_COMMIT=1.2.5
+        - BUILD_COMMIT=1.2.6
         - BUILD_DEPENDS=""
         - TEST_DEPENDS="pytest"
         - PLAT=x86_64
@@ -66,7 +66,7 @@ matrix:
     - os: osx
       env:
         - MB_PYTHON_VERSION=3.9
-        
+
 
 before_install:
     - source multibuild/common_utils.sh
@@ -92,3 +92,4 @@ deploy:
   on:
     repo: cvxopt/cvxopt-wheels
     condition: $WHEELHOUSE_UPLOAD = 1
+

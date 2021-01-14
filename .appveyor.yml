@@ -1,11 +1,11 @@
-version: 1.2.5.{build}-{branch}
+version: 1.2.6.{build}-{branch}
 image: Visual Studio 2019
 configuration: Release
 
 environment:
     REPO_DIR: "cvxopt"
     PACKAGE_NAME: "cvxopt"
-    BUILD_COMMIT: "1.2.5"
+    BUILD_COMMIT: "1.2.6"
 #    BUILD_SUFFIX: ".post1"
     BUILD_DEPENDS: "setuptools wheel"
     TEST_DEPENDS: "pytest"
@@ -102,5 +102,5 @@ before_deploy:
     - cmd: |
         pip install --upgrade %DEPLOY_DEPENDS% 
 
-deploy_script:
-    - cmd: python -m twine upload --verbose --skip-existing dist\*.whl
+#deploy_script:
+#    - cmd: python -m twine upload --verbose --skip-existing dist\*.whl
