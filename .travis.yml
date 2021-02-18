@@ -1,6 +1,6 @@
 env:
     global:
-        - WHEELHOUSE_UPLOAD=0
+        - WHEELHOUSE_UPLOAD=1
         - REPO_DIR=cvxopt
         - BUILD_COMMIT=1.2.6
         - BUILD_DEPENDS=""
@@ -91,5 +91,6 @@ deploy:
   container: wheelhouse
   on:
     repo: cvxopt/cvxopt-wheels
+    branch: master
     condition: $WHEELHOUSE_UPLOAD = 1
 
