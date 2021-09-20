@@ -1,11 +1,11 @@
-version: 1.2.6.{build}-{branch}
+version: 1.2.7.{build}-{branch}
 image: Visual Studio 2019
 configuration: Release
 
 environment:
     REPO_DIR: "cvxopt"
     PACKAGE_NAME: "cvxopt"
-    BUILD_COMMIT: "1.2.6"
+    BUILD_COMMIT: "1.2.7"
 #    BUILD_SUFFIX: ".post1"
     BUILD_DEPENDS: "setuptools wheel"
     TEST_DEPENDS: "pytest"
