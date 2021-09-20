@@ -1,8 +1,8 @@
 # CVXOPT wheels for macOS, Linux, and Windows
 
-This repository automates [CVXOPT](https://github.com/cvxopt/cvxopt) wheel building using [multibuild](https://github.com/matthew-brett/multibuild), [Travis CI](https://travis-ci.org/cvxopt/cvxopt-wheels), and [AppVeyor](https://ci.appveyor.com/project/martinandersen/cvxopt-wheels).
+This repository automates [CVXOPT](https://github.com/cvxopt/cvxopt) wheel building using [multibuild](https://github.com/matthew-brett/multibuild), [Travis CI](https://app.travis-ci.com/cvxopt/cvxopt-wheels), and [AppVeyor](https://ci.appveyor.com/project/martinandersen/cvxopt-wheels).
 
-[![Build Status](https://travis-ci.org/cvxopt/cvxopt-wheels.svg?branch=master)](https://travis-ci.org/cvxopt/cvxopt-wheels)
+[![Build Status](https://app.travis-ci.com/cvxopt/cvxopt-wheels.svg?branch=master)](https://app.travis-ci.com/github/cvxopt/cvxopt-wheels)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/martinandersen/cvxopt-wheels?branch=master&svg=true)](https://ci.appveyor.com/project/martinandersen/cvxopt-wheels)
 
 ## Copyright and license

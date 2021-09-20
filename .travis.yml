@@ -47,10 +47,6 @@ matrix:
     - os: osx
       env:
         - MB_PYTHON_VERSION=2.7
-        - MB_PYTHON_OSX_VER=10.6
-    - os: osx
-      env:
-        - MB_PYTHON_VERSION=2.7
     - os: osx
       env:
         - MB_PYTHON_VERSION=3.5
@@ -86,7 +82,7 @@ deploy:
   provider: cloudfiles
   username: martinandersen
   api_key:
-    secure: "VRSaOLmsDN67+mly3YmOpgedJvwBnlVif3ZHIU9lBDQtbthiGu9lcnEY5kiT6EMU9iONxPg2ibWpykkepeRfyUB6wK7Nz45y3cnhKbeisPISKQO4JtjdWNnzjFFsBwaviAsOy3GlhbmNy9PUPPcCgui19Mv4XV0ww7Kyrt6G1V11JRjQkPY1fKBy2eUBbKnfpl3lqNERyCCg75FxdF/RYyneTHnUDvDUb4qcNgO4MJyrB8nus3S5VtEIH4HdoWZbzo0RMu3UE4MiC9PyJOE2MVndcRxXkR1jeI+Yx+A8nlOp2wAtdAe11yDtf2afiw9Ji65+npILLAi+0xrXJ/NQXorAJDsLZkGW2LiMihw7vOvph+yIFYaRfcD3UVe71OOuTf+DALLrczeXkUf5b3NiqvPCO+xCklfYJkR+vgfNR+zyOex4PH7YrNke3Pb9eySCdjQF3SWBG3q5iPNxOATb51YZf93FmRQClEg87ECpQA1nJh2N+nIPX+qF4DGzqjMfjPgliv3wcXpzzpEGVuDI0QFP3ZDuEU4qBFNevqFfOlXb13O5JH+czjtnkFOyKK7CcxhhkT+MqDI+JzOCuaLDufLjh1gI3JpMO3pFtsLqnMGqFJBVEOyMo1gRsveOM/wsJ6pbo85irTAd4BRjmY1i3iaUzNy/rXleLNrJMZ6qluo="
+    secure: "iY1q/4j4/Q3iujT7xSvlNcycWqiAQ+H+CERvDcovUqzPI46gFuDpXuXOtCmJXS/78ThyaYh6RLrrrVVOrVuOd0v0kHjq3+60C1AEWan579wTAOGt2JgeRjQrFTiIecLI09Z1KImck94yQVczpqjTn03W72FpGFtB4ORbSZrh+8h86ramoa5JnFpnfcYABjJO/7AnB1R9TKsH2nKQZb3qSwGf7YVjuk3LhY6cV6ZKfEpNaKRjV5uGL/b9owhoKri9YXH/dxJ1mxiNPtNdLbmgHpVN3Tf1JGMpz1EGPdLAvXp8DwrAe6N7e75qrvw0U9PyfYJEpipl9LFpPsJgeL8Aj+DgNiYzNXwm+IN/DbUKAe13xajiCYppqusA0gKDrBrD2DCBmepNZfedrhGIEh7mEMflJa+H+bcDdAqhx+qrXPfGH44xE+wnBv7kGPHLU4SmEhDAxXyKpn/6lVJsQXrQDlyyqLgUXw0S8ahoelZeAsOwDfahxbcnrS1Ig7WKG4oOyXUYiRngM9rcjoUXXOACsYoRTWsxbjAbvOcL+wNN9vMTXKdLreWOuRgfEPYZUE3ThiEzTck4gFfx+F55n2UV5ylSw8lOzdyJ03HEFsvikZTWYdTfc6qi2TDrMyWg6fzKr1HHQXUHWFxaPY1RvUrRw3LaJpbWuJ64QSBaeDsKBrs="
   region: IAD
   container: wheelhouse
   on:
