@@ -2,7 +2,7 @@ env:
     global:
         - WHEELHOUSE_UPLOAD=1
         - REPO_DIR=cvxopt
-        - BUILD_COMMIT=1.2.7
+        - BUILD_COMMIT=1.2.8
         - BUILD_DEPENDS=""
         - TEST_DEPENDS="pytest"
         - PLAT=x86_64
@@ -16,28 +16,34 @@ matrix:
   include:
     - os: linux
       env:
-        - MB_PYTHON_VERSION=3.6
+        - MB_PYTHON_VERSION="3.6"
     - os: linux
       env:
-        - MB_PYTHON_VERSION=3.7
+        - MB_PYTHON_VERSION="3.7"
     - os: linux
       env:
-        - MB_PYTHON_VERSION=3.8
+        - MB_PYTHON_VERSION="3.8"
     - os: linux
       env:
-        - MB_PYTHON_VERSION=3.9
+        - MB_PYTHON_VERSION="3.9"
+    - os: linux
+      env:
+        - MB_PYTHON_VERSION="3.10"
     - os: osx
       env:
-        - MB_PYTHON_VERSION=3.6
+        - MB_PYTHON_VERSION="3.6"
     - os: osx
       env:
-        - MB_PYTHON_VERSION=3.7
+        - MB_PYTHON_VERSION="3.7"
     - os: osx
       env:
-        - MB_PYTHON_VERSION=3.8
+        - MB_PYTHON_VERSION="3.8"
     - os: osx
       env:
-        - MB_PYTHON_VERSION=3.9
+        - MB_PYTHON_VERSION="3.9"
+    - os: osx
+      env:
+        - MB_PYTHON_VERSION="3.10"
 
 
 before_install:

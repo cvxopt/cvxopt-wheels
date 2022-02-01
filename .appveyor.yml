@@ -1,11 +1,11 @@
-version: 1.2.7.{build}-{branch}
+version: 1.2.8.{build}-{branch}
 image: Visual Studio 2019
 configuration: Release
 
 environment:
     REPO_DIR: "cvxopt"
     PACKAGE_NAME: "cvxopt"
-    BUILD_COMMIT: "1.2.7"
+    BUILD_COMMIT: "1.2.8"
 #    BUILD_SUFFIX: ".post1"
     BUILD_DEPENDS: "setuptools wheel"
     TEST_DEPENDS: "pytest"
@@ -24,11 +24,11 @@ environment:
         secure: "4zJCT875BtQ2jzr0umkkTjOd0BSVanl/TgrRwz9ssUBQ+0mZ6j3/vVZHSIR2sMziQR0Q5VMOYp/IZuCUyLN+8+NY+jajEVMbnxpbYVdclUCu7CTVkKSZtxNk9mnQ2Ni1Clc9Xl9lH/hM3I/vvlGRXHQQ3bEReFkSxEL72I0Hze+YauDS2O51Pm3XNXDMIGbeInfNtDTzMTS0xwaMLfWLLsQbvnRinDvUKZePYtM5zCLRgoES0czvxMWlpk7bIU0c3M1EpNO8exXX6rQGoV4oYA=="
 
     matrix:
-        - PYTHON_VERSION: "3.9"
-        - PYTHON_VERSION: "3.8"
-        - PYTHON_VERSION: "3.7"
         - PYTHON_VERSION: "3.6"
-        - PYTHON_VERSION: "3.5"
+        - PYTHON_VERSION: "3.7"
+        - PYTHON_VERSION: "3.8"
+        - PYTHON_VERSION: "3.9"
+        - PYTHON_VERSION: "3.10"
 
 platform:
     - x64

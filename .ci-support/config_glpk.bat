@@ -1,5 +1,5 @@
-set GLPK_VERSION=4.65
-set GLPK_SHA256=4281e29b628864dfe48d393a7bedd781e5b475387c20d8b0158f329994721a10
+set GLPK_VERSION=5.0
+set GLPK_SHA256=26aa624525a636de272c0b329e2dfd01a0d5b7827f1c1c76f393d71e37dead70
 
 wget -nv http://ftp.gnu.org/gnu/glpk/glpk-%GLPK_VERSION%.tar.gz 
 checksum -t sha256 -c %GLPK_SHA256% glpk-%GLPK_VERSION%.tar.gz 
