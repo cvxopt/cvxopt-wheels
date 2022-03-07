@@ -6,7 +6,7 @@ export CVXOPT_BUILD_DSDP=1
 export CVXOPT_BUILD_FFTW=1
 export CVXOPT_BUILD_GLPK=1
 export CVXOPT_BUILD_GSL=1
-export OPENBLAS_VERSION=0.3.19
+export OPENBLAS_VERSION=0.3.10
 TESTS_DIR="$(pwd)/cvxopt/tests"
 
 source library_builders.sh
