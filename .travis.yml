@@ -1,6 +1,6 @@
 env:
     global:
-        - WHEELHOUSE_UPLOAD=1
+        - WHEELHOUSE_UPLOAD=0
         - REPO_DIR=cvxopt
         - BUILD_COMMIT=1.3.0
         - BUILD_DEPENDS=""
@@ -14,37 +14,46 @@ dist: xenial
 
 matrix:
   include:
-    - os: linux
-      env:
-        - MB_PYTHON_VERSION="3.6"
-    - os: linux
-      env:
-        - MB_PYTHON_VERSION="3.7"
-    - os: linux
-      env:
-        - MB_PYTHON_VERSION="3.8"
-    - os: linux
-      env:
-        - MB_PYTHON_VERSION="3.9"
-    - os: linux
-      env:
-        - MB_PYTHON_VERSION="3.10"
+    # - os: linux
+    #   env:
+    #     - MB_PYTHON_VERSION="3.6"
+    # - os: linux
+    #   env:
+    #     - MB_PYTHON_VERSION="3.7"
+    # - os: linux
+    #   env:
+    #     - MB_PYTHON_VERSION="3.8"
+    # - os: linux
+    #   env:
+    #     - MB_PYTHON_VERSION="3.9"
+    # - os: linux
+    #   env:
+    #     - MB_PYTHON_VERSION="3.10"
+    # - os: osx
+    #   env:
+    #     - MB_PYTHON_VERSION="3.6"
+    #     - PLAT="universal2"
+    # - os: osx
+    #   env:
+    #     - MB_PYTHON_VERSION="3.7"
+    #     - PLAT="universal2"
+    # - os: osx
+    #   env:
+    #     - MB_PYTHON_VERSION="3.8"
+    #     - PLAT="universal2"
+    # - os: osx
+    #   env:
+    #     - MB_PYTHON_VERSION="3.9"
+    #     - PLAT="universal2"
+    # - os: osx
+    #   env:
+    #     - MB_PYTHON_VERSION="3.10"
+    #     - PLAT="universal2"
     - os: osx
       env:
-        - MB_PYTHON_VERSION="3.6"
-    - os: osx
-      env:
-        - MB_PYTHON_VERSION="3.7"
-    - os: osx
-      env:
-        - MB_PYTHON_VERSION="3.8"
-    - os: osx
-      env:
-        - MB_PYTHON_VERSION="3.9"
-    - os: osx
-      env:
-        - MB_PYTHON_VERSION="3.10"
-
+        - MB_PYTHON_VERSION="3.11"
+        - PLAT="universal2"
+        - osx_image=xcode12u
 
 before_install:
     - source multibuild/common_utils.sh
