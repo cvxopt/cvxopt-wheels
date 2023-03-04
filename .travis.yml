@@ -29,6 +29,9 @@ matrix:
     # - os: linux
     #   env:
     #     - MB_PYTHON_VERSION="3.10"
+      - os: linux
+        env:
+          - MB_PYTHON_VERSION="3.11"
     # - os: osx
     #   env:
     #     - MB_PYTHON_VERSION="3.6"
@@ -50,10 +53,10 @@ matrix:
     #     - MB_PYTHON_VERSION="3.10"
     #     - PLAT="universal2"
     - os: osx
+      osx_image: xcode12.5
       env:
         - MB_PYTHON_VERSION="3.11"
-        - PLAT="universal2"
-        - osx_image=xcode12u
+        - PLAT="universal2" 
 
 before_install:
     - source multibuild/common_utils.sh
