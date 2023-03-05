@@ -9,6 +9,10 @@ export CVXOPT_BUILD_GSL=1
 export OPENBLAS_VERSION=0.3.10
 TESTS_DIR="$(pwd)/cvxopt/tests"
 
+if [ -n "${IS_MACOS}" ]; then
+    echo "--insecure" >> $HOME/.curlrc
+fi
+
 source library_builders.sh
 
 function pre_build {
@@ -25,10 +29,10 @@ function pre_build {
     fi
 
     # Build dependencies
-    if [ -z "${IS_OSX}" ]; then
-        build_openblas  # defined in multibuild/library_builders.sh
-        export CVXOPT_BLAS_LIB=openblas
-        export CVXOPT_LAPACK_LIB=openblas
+    build_openblas  # defined in multibuild/library_builders.sh
+    export CVXOPT_BLAS_LIB=openblas
+    export CVXOPT_LAPACK_LIB=openblas
+    if [ -z "${IS_MACOS}" ]; then
         export CVXOPT_BLAS_LIB_DIR=${BUILD_PREFIX}/lib
     fi
     if [ "${CVXOPT_BUILD_DSDP}" == "1" ]; then build_dsdp; fi

@@ -11,7 +11,6 @@ FFTW_SHA256="56c932549852cddcfafdab3820b0200c7742675be92179e59e6215b340e26467"
 SUITESPARSE_VERSION="5.10.1"
 SUITESPARSE_SHA256="acb4d1045f48a237e70294b950153e48dce5b5f9ca8190e86c2b8c54ce00a7ee"
 
-
 type fetch_unpack &> /dev/null || source multibuild/library_builders.sh
 
 function build_dsdp {
@@ -21,7 +20,7 @@ function build_dsdp {
   if [ -n "${IS_OSX}" ]; then
     (cd DSDP${DSDP_VERSION} \
         && patch -p1 < ../dsdp.patch \
-        && make LAPACKBLAS="-L${BUILD_PREFIX}/lib -lopenblas" PREFIX=${BUILD_PREFIX} IS_OSX=1 DSDPROOT=`pwd` install)
+        && make LAPACKBLAS="-L/usr/local/opt/openblas/lib -lopenblas" PREFIX=${BUILD_PREFIX} IS_OSX=1 DSDPROOT=`pwd` install)
   else
     build_openblas
     (cd DSDP${DSDP_VERSION} \
