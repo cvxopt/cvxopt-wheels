@@ -11,7 +11,7 @@ env:
 language: generic
 services: docker
 os: linux
-dist: xenial
+dist: focal
 
 jobs:
   include:
@@ -51,11 +51,11 @@ jobs:
     #   osx_image: xcode12.5
     #   env:
     #     - MB_PYTHON_VERSION=3.11
-    - os: osx
-      osx_image: xcode12.5
-      env:
-        - MB_PYTHON_VERSION=3.9
-        - PLAT="universal2" 
+    # - os: osx
+    #   osx_image: xcode12.5
+    #   env:
+    #     - MB_PYTHON_VERSION=3.9
+    #     - PLAT="universal2" 
     # - os: osx
     #   osx_image: xcode12.5
     #   env:
