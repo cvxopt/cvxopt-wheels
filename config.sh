@@ -2,7 +2,7 @@
 # Test for OSX with [ -n "$IS_OSX" ]
 
 # Configure which optional extensions to build
-export CVXOPT_BUILD_DSDP=1
+export CVXOPT_BUILD_DSDP=0
 export CVXOPT_BUILD_FFTW=1
 export CVXOPT_BUILD_GLPK=1
 export CVXOPT_BUILD_GSL=1
