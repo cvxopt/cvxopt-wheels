@@ -1,3 +1,6 @@
 [submodule "cvxopt"]
 	path = cvxopt
 	url = https://github.com/cvxopt/cvxopt.git
+[submodule "multibuild"]
+	path = multibuild
+	url = https://github.com/multi-build/multibuild.git
