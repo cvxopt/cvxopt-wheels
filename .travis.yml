@@ -54,7 +54,7 @@ jobs:
     - os: osx
       osx_image: xcode12.5
       env:
-        - MB_PYTHON_VERSION="3.9"
+        - MB_PYTHON_VERSION=3.9
         - PLAT="universal2" 
     # - os: osx
     #   osx_image: xcode12.5
