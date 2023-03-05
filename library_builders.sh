@@ -21,7 +21,7 @@ function build_dsdp {
   if [ -n "${IS_OSX}" ]; then
     (cd DSDP${DSDP_VERSION} \
         && patch -p1 < ../dsdp.patch \
-        && make PREFIX=${BUILD_PREFIX} IS_OSX=1 DSDPROOT=`pwd` install)
+        && make LAPACKBLAS="-L${BUILD_PREFIX}/lib -lopenblas" PREFIX=${BUILD_PREFIX} IS_OSX=1 DSDPROOT=`pwd` install)
   else
     build_openblas
     (cd DSDP${DSDP_VERSION} \
