@@ -11,7 +11,7 @@ env:
 language: generic
 services: docker
 os: linux
-dist: focal
+dist: jammy
 
 jobs:
   include:
@@ -25,8 +25,8 @@ jobs:
     #     - MB_PYTHON_VERSION="3.9"
     # - env:
     #     - MB_PYTHON_VERSION="3.10"
-    # - env:
-    #     - MB_PYTHON_VERSION="3.11"
+    - env:
+        - MB_PYTHON_VERSION="3.11"
     # - os: osx
     #   env:
     #     - MB_PYTHON_VERSION="3.6"
@@ -50,11 +50,11 @@ jobs:
     # - os: osx
     #   env:
     #     - MB_PYTHON_VERSION="3.11"
-    - os: osx
-      osx_image: xcode12.5
-      env:
-        - MB_PYTHON_VERSION="3.9"
-        - PLAT="universal2" 
+    # - os: osx
+    #   osx_image: xcode12.5
+    #   env:
+    #     - MB_PYTHON_VERSION="3.9"
+    #     - PLAT="universal2" 
     # - os: osx
     #   env:
     #     - MB_PYTHON_VERSION="3.10"
@@ -85,7 +85,7 @@ deploy:
     secure: "iY1q/4j4/Q3iujT7xSvlNcycWqiAQ+H+CERvDcovUqzPI46gFuDpXuXOtCmJXS/78ThyaYh6RLrrrVVOrVuOd0v0kHjq3+60C1AEWan579wTAOGt2JgeRjQrFTiIecLI09Z1KImck94yQVczpqjTn03W72FpGFtB4ORbSZrh+8h86ramoa5JnFpnfcYABjJO/7AnB1R9TKsH2nKQZb3qSwGf7YVjuk3LhY6cV6ZKfEpNaKRjV5uGL/b9owhoKri9YXH/dxJ1mxiNPtNdLbmgHpVN3Tf1JGMpz1EGPdLAvXp8DwrAe6N7e75qrvw0U9PyfYJEpipl9LFpPsJgeL8Aj+DgNiYzNXwm+IN/DbUKAe13xajiCYppqusA0gKDrBrD2DCBmepNZfedrhGIEh7mEMflJa+H+bcDdAqhx+qrXPfGH44xE+wnBv7kGPHLU4SmEhDAxXyKpn/6lVJsQXrQDlyyqLgUXw0S8ahoelZeAsOwDfahxbcnrS1Ig7WKG4oOyXUYiRngM9rcjoUXXOACsYoRTWsxbjAbvOcL+wNN9vMTXKdLreWOuRgfEPYZUE3ThiEzTck4gFfx+F55n2UV5ylSw8lOzdyJ03HEFsvikZTWYdTfc6qi2TDrMyWg6fzKr1HHQXUHWFxaPY1RvUrRw3LaJpbWuJ64QSBaeDsKBrs="
   region: iad
   container: wheelhouse
-  edge: true
+  skip_cleanup: true
   on:
     repo: cvxopt/cvxopt-wheels
     all_branches: true
