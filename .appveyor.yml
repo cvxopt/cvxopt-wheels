@@ -6,7 +6,7 @@ environment:
     REPO_DIR: "cvxopt"
     PACKAGE_NAME: "cvxopt"
     BUILD_COMMIT: "1.3.0"
-#    BUILD_SUFFIX: ".post1"
+    BUILD_SUFFIX: ".1"
     BUILD_DEPENDS: "setuptools wheel"
     TEST_DEPENDS: "pytest"
     DEPLOY_DEPENDS: "twine"
@@ -24,11 +24,11 @@ environment:
         secure: "4zJCT875BtQ2jzr0umkkTjOd0BSVanl/TgrRwz9ssUBQ+0mZ6j3/vVZHSIR2sMziQR0Q5VMOYp/IZuCUyLN+8+NY+jajEVMbnxpbYVdclUCu7CTVkKSZtxNk9mnQ2Ni1Clc9Xl9lH/hM3I/vvlGRXHQQ3bEReFkSxEL72I0Hze+YauDS2O51Pm3XNXDMIGbeInfNtDTzMTS0xwaMLfWLLsQbvnRinDvUKZePYtM5zCLRgoES0czvxMWlpk7bIU0c3M1EpNO8exXX6rQGoV4oYA=="
 
     matrix:
-        # - PYTHON_VERSION: "3.6"
-        # - PYTHON_VERSION: "3.7"
-        # - PYTHON_VERSION: "3.8"
-        # - PYTHON_VERSION: "3.9"
-        # - PYTHON_VERSION: "3.10"
+        - PYTHON_VERSION: "3.6"
+        - PYTHON_VERSION: "3.7"
+        - PYTHON_VERSION: "3.8"
+        - PYTHON_VERSION: "3.9"
+        - PYTHON_VERSION: "3.10"
         - PYTHON_VERSION: "3.11"
 
 platform:
@@ -72,8 +72,7 @@ build_script:
 
 after_build:
     - cmd: |
-        set PYTHON_VERSION_NO_PERIOD=311
-        set build_dir=build\lib.%PLAT_NAME%-cpython-%PYTHON_VERSION_NO_PERIOD%\cvxopt
+        set build_dir=build\lib.%PLAT_NAME%-%PYTHON_VERSION%\cvxopt
         mkdir %build_dir%\.lib
         copy %OPENBLAS_DLL% %build_dir%\.lib
         copy %OPENBLAS_LICENSE% %build_dir%
