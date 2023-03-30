@@ -26,7 +26,7 @@ jobs:
     # - env:
     #     - MB_PYTHON_VERSION="3.10"
     - env:
-        - MB_PYTHON_VERSION="3.11"
+        - MB_PYTHON_VERSION="3.11" 
     # - os: osx
     #   env:
     #     - MB_PYTHON_VERSION="3.6"
@@ -90,4 +90,5 @@ deploy:
     repo: cvxopt/cvxopt-wheels
     all_branches: true
     condition: $WHEELHOUSE_UPLOAD = 1
+  edge: true
 
