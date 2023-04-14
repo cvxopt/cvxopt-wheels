@@ -13,8 +13,8 @@ mkdir OpenBLAS
 7z x -oOpenBLAS -bso0 -bsp0 OpenBLAS-%OPENBLAS_VERSION%-%PLATFORM%.zip 
 set "CVXOPT_BLAS_LIB=libopenblas" 
 set "CVXOPT_LAPACK_LIB=libopenblas" 
-set "CVXOPT_BLAS_LIB_DIR=%cd%\OpenBLAS\lib" 
 set "OPENBLAS_DLL=%cd%\OpenBLAS\bin\libopenblas.dll"
+set "OPENBLAS_LIB=%cd%\OpenBLAS\lib\libopenblas.lib"
 
 wget https://raw.githubusercontent.com/xianyi/OpenBLAS/v%OPENBLAS_VERSION%/LICENSE -O LICENSE_OpenBLAS-%OPENBLAS_VERSION% &
 set OPENBLAS_LICENSE=%cd%\LICENSE_OpenBLAS-%OPENBLAS_VERSION%        

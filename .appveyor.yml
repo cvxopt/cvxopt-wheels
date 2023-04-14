@@ -1,17 +1,18 @@
-version: 1.3.0.{build}-{branch}
+version: 1.3.1.{build}-{branch}
 image: Visual Studio 2019
 configuration: Release
 
 environment:
     REPO_DIR: "cvxopt"
     PACKAGE_NAME: "cvxopt"
-    BUILD_COMMIT: "1.3.0"
-    BUILD_SUFFIX: ".1"
-    BUILD_DEPENDS: "setuptools wheel"
+    BUILD_COMMIT: "1.3.1rc"
+#    BUILD_SUFFIX: ".1"
+    BUILD_DEPENDS: "setuptools setuptools_scm wheel build"
     TEST_DEPENDS: "pytest"
     DEPLOY_DEPENDS: "twine"
     CVXOPT_BUILD_GLPK: "1"
     CVXOPT_MSVC: "1"
+    TARGET_ARCH: 64
     TWINE_NON_INTERACTIVE: true
     TWINE_USERNAME: "__token__"
     # PyPI
@@ -25,7 +26,7 @@ environment:
 
     matrix:
 #        - PYTHON_VERSION: "3.6"
-        - PYTHON_VERSION: "3.7"
+#        - PYTHON_VERSION: "3.7"
         - PYTHON_VERSION: "3.8"
         - PYTHON_VERSION: "3.9"
         - PYTHON_VERSION: "3.10"
@@ -33,7 +34,7 @@ environment:
 
 platform:
     - x64
-    - x86
+#    - x86
 
 matrix:
     fast_finish: true
@@ -42,8 +43,7 @@ install:
     # Configure build environment
     - cmd: |
         choco install wget checksum
-        if [%PLATFORM%]==[x64] ( set "TARGET_ARCH=64" ) else ( set "TARGET_ARCH=32" ) 
-        if [%PLATFORM%]==[x64] ( set "PLAT_NAME=win-amd64" ) else ( set "PLAT_NAME=win32" ) 
+        
         call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars%TARGET_ARCH%.bat"
         set PYTHON_DIR=C:\Python%PYTHON_VERSION:.=%
         if [%PLATFORM%]==[x64] ( set "PYTHON_DIR=%PYTHON_DIR%-x64" )
@@ -68,18 +68,12 @@ build_script:
         cd %REPO_DIR%
         git checkout %BUILD_COMMIT%     
         if defined BUILD_SUFFIX ( git tag %BUILD_COMMIT%%BUILD_SUFFIX% %BUILD_COMMIT% && git tag -d %BUILD_COMMIT% && git checkout %BUILD_COMMIT%%BUILD_SUFFIX% )               
-        python setup.py build --compiler=msvc
-
-after_build:
-    - cmd: |
-        dir build
-        set build_dir=build\lib.%PLAT_NAME%-cpython-%PYTHON_VERSION:.=%\cvxopt
-        mkdir %build_dir%\.lib
-        copy %OPENBLAS_DLL% %build_dir%\.lib
-        copy %OPENBLAS_LICENSE% %build_dir%
-        python ..\.ci-support\_add_bootstrap.py %build_dir%
-        python setup.py bdist_wheel
-        ls dist/*
+        mkdir src\python\.libs
+        copy %OPENBLAS_DLL% src\python\.libs
+        copy %OPENBLAS_LIB% libopenblas.lib
+        copy %OPENBLAS_LICENSE% src\python
+        set "CVXOPT_BLAS_LIB_DIR=%cd%" 
+        python -m build --wheel
 
 before_test:
     - cmd: |
@@ -88,13 +82,12 @@ before_test:
 
 test_script:
     - cmd: |
-        python --version
         python -c "from cvxopt import blas,lapack,cholmod,umfpack"
         if [%CVXOPT_BUILD_DSDP%]==[1] ( python -c "from cvxopt import dsdp" )
         if [%CVXOPT_BUILD_FFTW%]==[1] ( python -c "from cvxopt import fftw" )
         if [%CVXOPT_BUILD_GLPK%]==[1] ( python -c "from cvxopt import glpk" )
         if [%CVXOPT_BUILD_GSL%]==[1] ( python -c "from cvxopt import gsl" )
-        pytest
+        pytest tests
 
 artifacts:
     - path: cvxopt\dist\*.whl
