@@ -11,7 +11,7 @@ env:
 language: generic
 services: docker
 os: linux
-dist: jammy
+dist: focal
 
 jobs:
   include:
