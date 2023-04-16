@@ -6,10 +6,6 @@ GLPK_VERSION="5.0"
 GLPK_SHA256="4a1013eebb50f728fc601bdd833b0b2870333c3b3e5a816eeba921d95bec6f15"
 GSL_VERSION="2.7.1"
 GSL_SHA256="dcb0fbd43048832b757ff9942691a8dd70026d5da0ff85601e52687f6deeb34b"
-FFTW_VERSION="3.3.10"
-FFTW_SHA256="56c932549852cddcfafdab3820b0200c7742675be92179e59e6215b340e26467"
-SUITESPARSE_VERSION="5.10.1"
-SUITESPARSE_SHA256="acb4d1045f48a237e70294b950153e48dce5b5f9ca8190e86c2b8c54ce00a7ee"
 
 type fetch_unpack &> /dev/null || source multibuild/library_builders.sh
 
@@ -18,9 +14,12 @@ function build_dsdp {
   fetch_unpack http://www.mcs.anl.gov/hs/software/DSDP/DSDP${DSDP_VERSION}.tar.gz
   check_sha256sum archives/DSDP${DSDP_VERSION}.tar.gz ${DSDP_SHA256}
   if [ -n "${IS_OSX}" ]; then
+    if [ PLAT = "arm64" ]; then
+        export ARCH_FLAGS="-target arm64-apple-macos11"
+    fi
     (cd DSDP${DSDP_VERSION} \
         && patch -p1 < ../dsdp.patch \
-        && make LAPACKBLAS="-L/usr/local/opt/openblas/lib -lopenblas" PREFIX=${BUILD_PREFIX} IS_OSX=1 DSDPROOT=`pwd` install)
+        && make LAPACKBLAS="-framework Accelerate" PREFIX=${BUILD_PREFIX} IS_OSX=1 DSDPROOT=`pwd` install)
   else
     build_openblas
     (cd DSDP${DSDP_VERSION} \
