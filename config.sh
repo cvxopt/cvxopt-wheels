@@ -69,11 +69,6 @@ function pre_build {
         export CVXOPT_GSL_LIB_DIR=${BUILD_PREFIX}/lib
         export CVXOPT_GSL_INC_DIR=${BUILD_PREFIX}/include/gsl
     fi
-
-     # Travis only clones the last 50 commits (--depth=50), but we require the
-     # entire repository to generate the package version with setuptools_scm
-    git config --global --add safe.directory /io/cvxopt
-    (cd $(pwd)/cvxopt && git fetch --unshallow)
 }
 
 function build_wheel {
