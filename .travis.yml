@@ -12,7 +12,7 @@ env:
 language: generic
 services: docker
 os: linux
-dist: jammy
+dist: focal
 
 git:   
   depth: false
@@ -72,7 +72,12 @@ install:
 script:
   - install_run $PLAT
 
-before_deploy: cd ${TRAVIS_BUILD_DIR}/wheelhouse
+before_deploy: 
+  - cd ${TRAVIS_BUILD_DIR}/wheelhouse
+  - gem uninstall bundler -x
+  - gem install bundler --version=2.4.22
+  - bundler --version
+
 deploy:
   provider: cloudfiles
   username: martinandersen
