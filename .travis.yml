@@ -29,30 +29,36 @@ jobs:
     #     - MB_PYTHON_VERSION="3.10"
     # - env:
     #     - MB_PYTHON_VERSION="3.11" 
+    - env:
+        - MB_PYTHON_VERSION="3.12" 
+    # - os: osx
+    #   osx_image: xcode12.5
+    #   env:
+    #     - MB_PYTHON_VERSION="3.6"
+    # - os: osx
+    #   osx_image: xcode12.5
+    #   env:
+    #     - MB_PYTHON_VERSION="3.7"
+    # - os: osx
+    #   osx_image: xcode12.5
+    #   env:
+    #     - MB_PYTHON_VERSION="3.8"
+    # - os: osx
+    #   osx_image: xcode12.5
+    #   env:
+    #     - MB_PYTHON_VERSION="3.9"
+    # - os: osx
+    #   osx_image: xcode12.5
+    #   env:
+    #     - MB_PYTHON_VERSION="3.10"
+    # - os: osx
+    #   osx_image: xcode12.5
+    #   env:
+    #     - MB_PYTHON_VERSION="3.11"
     - os: osx
       osx_image: xcode12.5
       env:
-        - MB_PYTHON_VERSION="3.6"
-    - os: osx
-      osx_image: xcode12.5
-      env:
-        - MB_PYTHON_VERSION="3.7"
-    - os: osx
-      osx_image: xcode12.5
-      env:
-        - MB_PYTHON_VERSION="3.8"
-    - os: osx
-      osx_image: xcode12.5
-      env:
-        - MB_PYTHON_VERSION="3.9"
-    - os: osx
-      osx_image: xcode12.5
-      env:
-        - MB_PYTHON_VERSION="3.10"
-    - os: osx
-      osx_image: xcode12.5
-      env:
-        - MB_PYTHON_VERSION="3.11"
+        - MB_PYTHON_VERSION="3.12"
 
 before_install:
   - source multibuild/common_utils.sh
