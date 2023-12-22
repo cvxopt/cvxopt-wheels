@@ -12,7 +12,7 @@ env:
 language: generic
 services: docker
 os: linux
-dist: focal
+dist: jammy
 
 git:   
   depth: false
@@ -55,10 +55,10 @@ jobs:
     #   osx_image: xcode12.5
     #   env:
     #     - MB_PYTHON_VERSION="3.11"
-    - os: osx
-      osx_image: xcode12.5
-      env:
-        - MB_PYTHON_VERSION="3.12"
+    # - os: osx
+    #   osx_image: xcode12.5
+    #   env:
+    #     - MB_PYTHON_VERSION="3.12"
 
 before_install:
   - source multibuild/common_utils.sh
